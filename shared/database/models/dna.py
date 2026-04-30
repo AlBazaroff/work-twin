@@ -4,10 +4,11 @@ Contain models related to Personality DNA.
 
 from typing import Optional, TYPE_CHECKING
 
-from sqlalchemy import ForeignKey, JSON, Integer, Boolean, UniqueConstraint
+from sqlalchemy import ForeignKey, Integer, Boolean, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.core import Base
+from database.types import EncryptedJSON
 from core.database.models.mixins import IDMixin, TimeStampMixin
 
 if TYPE_CHECKING:
@@ -28,9 +29,9 @@ class PersonalityDNA(Base, IDMixin, TimeStampMixin):
         index=True,
         nullable=False,
     )
-    style_markers: Mapped[dict] = mapped_column(JSON, nullable=False)
-    core_facts: Mapped[Optional[dict]] = mapped_column(JSON)
-    preferences: Mapped[Optional[dict]] = mapped_column(JSON)
+    style_markers: Mapped[dict] = mapped_column(EncryptedJSON, nullable=False)
+    core_facts: Mapped[Optional[dict]] = mapped_column(EncryptedJSON)
+    preferences: Mapped[Optional[dict]] = mapped_column(EncryptedJSON)
     version: Mapped[int] = mapped_column(
         Integer,
     )

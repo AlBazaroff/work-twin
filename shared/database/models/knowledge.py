@@ -18,6 +18,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from pgvector.sqlalchemy import VECTOR
 
 from database.core import Base
+from database.types import EncryptedJSON, EncryptedString
 from core.database.models.mixins import IDMixin, TimeStampMixin
 from core.constants.knowledge import KnowledgeScope, KnowledgeSourceType
 from core.constants.user import Integrity
@@ -63,7 +64,7 @@ class Knowledge(Base, IDMixin, TimeStampMixin):
         index=True,
     )
     content: Mapped[str] = mapped_column(
-        String,
+        EncryptedString,
         nullable=False,
     )
     embedding: Mapped[list] = mapped_column(
@@ -84,12 +85,12 @@ class Knowledge(Base, IDMixin, TimeStampMixin):
         nullable=True,
     )
     source_id: Mapped[str] = mapped_column(
-        String(64),
+        EncryptedString(64),
         nullable=True,
         index=True,
     )
     interceptor_id: Mapped[str] = mapped_column(
-        String(64),
+        EncryptedString(64),
         nullable=True,
         index=True,
     )
@@ -102,7 +103,7 @@ class Knowledge(Base, IDMixin, TimeStampMixin):
         default=True,
         nullable=False,
     )
-    extra_info: Mapped[Optional[dict]] = mapped_column(JSON)
+    extra_info: Mapped[Optional[dict]] = mapped_column(EncryptedJSON)
 
     knowledge_space: Mapped["KnowledgeSpace"] = relationship(
         back_populates="knowledge_items",
