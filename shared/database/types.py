@@ -10,8 +10,28 @@ SECRET = config.CRYPTO_SECRET_KEY
 cipher = Fernet(SECRET)
 
 
+class EncryptedString(TypeDecorator):
+    """Encrypt string column, decrypt when extracting."""
+
+    impl = String
+
+    def process_bind_param(self, value: Any | None, dialect: Dialect) -> Any:
+        if value is not None:
+            encrypted = cipher.encrypt(value)
+            return encrypted
+        return value
+
+    def process_result_value(
+        self, value: Any | None, dialect: Dialect
+    ) -> Any | None:
+        if value is not None:
+            decrypted = cipher.decrypt(value)
+            return decrypted
+        return value
+
+
 class EncryptedJSON(TypeDecorator):
-    """Encrypt JSON when recording, decrypted when extracting"""
+    """Encrypt JSON when recording, decrypted when extracting."""
 
     impl = String
 

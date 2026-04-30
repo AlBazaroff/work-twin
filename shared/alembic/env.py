@@ -9,6 +9,9 @@ from alembic import context
 
 import config as settings
 from database.core import Base
+from database.models.dna import PersonalityDNA  # noqa: F401
+from database.models.knowledge import Knowledge, KnowledgeSpace  # noqa: F401
+from database.models.user import User, UserIntegrity  # noqa: F401
 
 
 # this is the Alembic Config object, which provides
