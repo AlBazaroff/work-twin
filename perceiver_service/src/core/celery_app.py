@@ -6,7 +6,7 @@ from src.config import settings
 
 app = Celery(
     "perceiver",
-    broker=str(settings.broker_url),
+    broker=str(settings.rabbitmq.connection_url),
 )
 
 app.autodiscover_tasks()
