@@ -4,9 +4,9 @@ from typing import Any
 from cryptography.fernet import Fernet
 from sqlalchemy import Dialect, TypeDecorator, String
 
-import config
+from config import settings
 
-SECRET = config.CRYPTO_SECRET_KEY
+SECRET = settings.secret_key
 cipher = Fernet(SECRET)
 
 

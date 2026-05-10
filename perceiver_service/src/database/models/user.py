@@ -15,8 +15,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.core import Base
 from database.types import EncryptedJSON
-from core.database.models.mixins import IDMixin, TimeStampMixin
-from core.constants.user import UserStatus, Integrity, IntegrityStatus
+from database.mixins import IDMixin, TimeStampMixin
+from database.enums import UserStatus, Integrity, IntegrityStatus
 
 if TYPE_CHECKING:
     from .dna import PersonalityDNA

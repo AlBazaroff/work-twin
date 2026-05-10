@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import DeclarativeBase
 
-import config
+from config import settings
 
 
 def create_async_db_engine(connection_string: str) -> AsyncEngine:
@@ -20,20 +20,20 @@ def create_async_db_engine(connection_string: str) -> AsyncEngine:
     """
     timeout_kwargs = {
         # Connection timeout - how long to wait for a connection from the pool
-        "pool_timeout": config.DATABASE_ENGINE_POOL_TIMEOUT,
+        "pool_timeout": settings.database.engine_pool_timeout,
         # Recycle connections after this many seconds
-        "pool_recycle": config.DATABASE_ENGINE_POOL_RECYCLE,
+        "pool_recycle": settings.database.engine_pool_recycle,
         # Maximum number of connections to keep in the pool
-        "pool_size": config.DATABASE_ENGINE_POOL_SIZE,
+        "pool_size": settings.database.engine_pool_size,
         # Maximum overflow connections allowed beyond pool_size
-        "max_overflow": config.DATABASE_ENGINE_MAX_OVERFLOW,
+        "max_overflow": settings.database.engine_max_overflow,
         # Connection pre-ping to verify connection is still alive
-        "pool_pre_ping": config.DATABASE_ENGINE_POOL_PING,
+        "pool_pre_ping": settings.database.engine_pool_ping,
     }
     return create_async_engine(connection_string, **timeout_kwargs)
 
 
-engine = create_async_db_engine(config.SQLALCHEMY_DATABASE_CONNECTION)
+engine = create_async_db_engine(settings.database.connection_url)
 
 AsyncSessionLocal = async_sessionmaker(bind=engine)
 

@@ -47,5 +47,7 @@ class Settings(BaseSettings):
     rabbitmq: RabbitMQSettings = Field(default=...)
     database: DBSettings = Field(default=...)
 
+    secret_key: str = Field(default=...)
+
 
 settings = Settings()

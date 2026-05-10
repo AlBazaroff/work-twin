@@ -19,9 +19,8 @@ from pgvector.sqlalchemy import VECTOR
 
 from database.core import Base
 from database.types import EncryptedJSON, EncryptedString
-from core.database.models.mixins import IDMixin, TimeStampMixin
-from core.constants.knowledge import KnowledgeScope, KnowledgeSourceType
-from core.constants.user import Integrity
+from database.mixins import IDMixin, TimeStampMixin
+from database.enums import KnowledgeScope, KnowledgeSourceType, Integrity
 
 if TYPE_CHECKING:
     from .user import User

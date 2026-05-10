@@ -9,7 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.core import Base
 from database.types import EncryptedJSON
-from core.database.models.mixins import IDMixin, TimeStampMixin
+from database.mixins import IDMixin, TimeStampMixin
 
 if TYPE_CHECKING:
     from .user import User
