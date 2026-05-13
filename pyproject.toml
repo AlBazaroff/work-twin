@@ -21,6 +21,7 @@ dependencies = [
     "pydantic>=2.13.3",
     "pydantic-settings>=2.14.0",
     "sqlalchemy>=2.0.49",
+    "telethon>=1.43.2",
     "uuid6>=2025.0.1",
 ]
 

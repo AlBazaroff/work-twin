@@ -2,6 +2,13 @@ from pydantic import Field, BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
+class TelegramSettings(BaseModel):
+    """Settings for telegram APP."""
+
+    api_id: int = Field(default=...)
+    api_hash: str = Field(default=...)
+
+
 class RabbitMQSettings(BaseModel):
     user: str = Field(default=...)
     password: str = Field(default=...)
@@ -46,6 +53,7 @@ class Settings(BaseSettings):
 
     rabbitmq: RabbitMQSettings = Field(default=...)
     database: DBSettings = Field(default=...)
+    telegram: TelegramSettings = Field(default=...)
 
     secret_key: str = Field(default=...)
 
