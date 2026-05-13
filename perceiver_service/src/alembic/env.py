@@ -10,7 +10,7 @@ from alembic import context
 from database.core import Base
 from database.models.dna import PersonalityDNA  # noqa: F401
 from database.models.knowledge import Knowledge, KnowledgeSpace  # noqa: F401
-from database.models.user import User, UserIntegrity  # noqa: F401
+from database.models.user import User, UserIntegration  # noqa: F401
 from config import settings
 
 

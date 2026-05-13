@@ -25,7 +25,7 @@ class PersonalityDNA(Base, IDMixin, TimeStampMixin):
     __tablename__ = "personality_dna"
 
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("user.id"),
+        ForeignKey("perceiver_user.id"),
         index=True,
         nullable=False,
     )

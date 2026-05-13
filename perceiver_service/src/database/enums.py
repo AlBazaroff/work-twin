@@ -43,16 +43,16 @@ class UserStatus(Enum):
     DEACTIVATED = "deactivated", "Deactivated"
 
 
-class Integrity(Enum):
-    """Represents available integrity services."""
+class Integration(Enum):
+    """Represents available integration services."""
 
     TELEGRAM = "telegram", "Telegram"
     SLACK = "slack", "Slack"
 
 
-class IntegrityStatus(Enum):
+class IntegrationStatus(Enum):
     """
-    Represents status of separate integrity.
+    Represents status of separate integration.
 
     Statuses:
         PENDING: in the process of verification

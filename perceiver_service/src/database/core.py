@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from typing import Annotated
 
 from fastapi import Depends
@@ -46,6 +47,7 @@ class Base(DeclarativeBase):
         return f"{self.__class__.__name__}({cols})"
 
 
+@asynccontextmanager
 async def get_db():
     """Get database session from request state."""
     async with AsyncSessionLocal() as session:

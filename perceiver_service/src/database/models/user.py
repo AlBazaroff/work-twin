@@ -16,7 +16,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database.core import Base
 from database.types import EncryptedJSON
 from database.mixins import IDMixin, TimeStampMixin
-from database.enums import UserStatus, Integrity, IntegrityStatus
+from database.enums import UserStatus, Integration, IntegrationStatus
 
 if TYPE_CHECKING:
     from .dna import PersonalityDNA
@@ -29,7 +29,7 @@ class User(Base, IDMixin, TimeStampMixin):
     from third-party service for connectivity between them.
     """
 
-    __tablename__ = "user"
+    __tablename__ = "perceiver_user"
 
     status: Mapped[UserStatus] = mapped_column(
         Enum(UserStatus, native_enum=False),
@@ -37,7 +37,7 @@ class User(Base, IDMixin, TimeStampMixin):
         nullable=False,
     )
 
-    integrities: Mapped[list["UserIntegrity"]] = relationship(
+    integrations: Mapped[list["UserIntegration"]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
     )
@@ -51,42 +51,44 @@ class User(Base, IDMixin, TimeStampMixin):
     )
 
 
-class UserIntegrity(Base, IDMixin, TimeStampMixin):
+class UserIntegration(Base, IDMixin, TimeStampMixin):
     """
-    User's integrity model.
-    Show social and another integrities,
+    User's integration model.
+    Show social and another integrations,
     which user provided.
     """
 
-    __tablename__ = "user_integrity"
+    __tablename__ = "user_integration"
 
     user_id: Mapped[uuid6.UUID] = mapped_column(
-        ForeignKey("user.id"),
+        ForeignKey("perceiver_user.id"),
         index=True,
         nullable=False,
     )
-    integrity: Mapped[Integrity] = mapped_column(
-        Enum(Integrity, native_enum=False),
+    integration: Mapped[Integration] = mapped_column(
+        Enum(Integration, native_enum=False),
         nullable=False,
     )
-    integrity_user_id: Mapped[Optional[str]] = mapped_column(
+    integration_user_id: Mapped[Optional[str]] = mapped_column(
         String(64),
         index=True,
     )
     credentials: Mapped[dict] = mapped_column(EncryptedJSON)
-    status: Mapped[IntegrityStatus] = mapped_column(
-        Enum(IntegrityStatus, native_enum=False),
-        default=IntegrityStatus.PENDING,
+    status: Mapped[IntegrationStatus] = mapped_column(
+        Enum(IntegrationStatus, native_enum=False),
+        default=IntegrationStatus.PENDING,
         nullable=False,
     )
     last_synced_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True),
     )
 
-    user: Mapped["User"] = relationship(back_populates="integrities")
+    user: Mapped["User"] = relationship(back_populates="integrations")
 
     __table_args__ = (
         UniqueConstraint(
-            "integrity_user_id", "integrity", name="uq_integrity_uid_integrity"
+            "integration_user_id",
+            "integration",
+            name="uq_integration_uid_integration",
         ),
     )
