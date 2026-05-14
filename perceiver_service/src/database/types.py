@@ -17,8 +17,8 @@ class EncryptedString(TypeDecorator):
 
     def process_bind_param(self, value: Any | None, dialect: Dialect) -> Any:
         if value is not None:
-            encrypted = cipher.encrypt(value)
-            return encrypted
+            encrypted = cipher.encrypt(value.encode())
+            return encrypted.decode()
         return value
 
     def process_result_value(
@@ -26,7 +26,7 @@ class EncryptedString(TypeDecorator):
     ) -> Any | None:
         if value is not None:
             decrypted = cipher.decrypt(value)
-            return decrypted
+            return decrypted.decode()
         return value
 
 
@@ -37,9 +37,9 @@ class EncryptedJSON(TypeDecorator):
 
     def process_bind_param(self, value: Any | None, dialect: Dialect) -> Any:
         if value is not None:
-            json_str = json.dumps(value)
-            encrypted = cipher.encrypt(json_str.encode())
-            return encrypted
+            json_data = json.dumps(value)
+            encrypted = cipher.encrypt(json_data.encode())
+            return encrypted.decode()
         return value
 
     def process_result_value(

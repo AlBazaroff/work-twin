@@ -11,8 +11,8 @@ class KnowledgeScope(Enum):
                  specific user
     """
 
-    GLOBAL = "global", "Global"
-    PRIVATE = "private", "Private"
+    GLOBAL = "global"
+    PRIVATE = "private"
 
 
 class KnowledgeSourceType(Enum):
@@ -24,8 +24,8 @@ class KnowledgeSourceType(Enum):
         GROUP_CHAT: messages from group chats
     """
 
-    PRIVATE_CHAT = "private chat", "Private chat"
-    GROUP_CHAT = "group chat", "Group chat"
+    PRIVATE_CHAT = ("private chat",)
+    GROUP_CHAT = ("group chat",)
 
 
 class UserStatus(Enum):
@@ -38,16 +38,16 @@ class UserStatus(Enum):
         DEACTIVATED: deactivated account
     """
 
-    PAID = "paid", "Paid"
-    UNPAID = "unpaid", "Unpaid"
-    DEACTIVATED = "deactivated", "Deactivated"
+    PAID = "paid"
+    UNPAID = "unpaid"
+    DEACTIVATED = "deactivated"
 
 
 class Integration(Enum):
     """Represents available integration services."""
 
-    TELEGRAM = "telegram", "Telegram"
-    SLACK = "slack", "Slack"
+    TELEGRAM = "telegram"
+    SLACK = "slack"
 
 
 class IntegrationStatus(Enum):
@@ -62,8 +62,8 @@ class IntegrationStatus(Enum):
         REVOKED: user revoked credentials
     """
 
-    PENDING = "pending", "Pending"
-    ACTIVE = "active", "Active"
-    INACTIVE = "inactive", "Inactive"
-    EXPIRED = "expired", "Expired"
-    REVOKED = "revoked", "Revoked"
+    PENDING = "pending"
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+    EXPIRED = "expired"
+    REVOKED = "revoked"
