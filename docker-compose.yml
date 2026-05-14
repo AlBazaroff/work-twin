@@ -4,14 +4,15 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: perciever_service
+    image: perceiver_work_twin:latest
     command: []
     restart: always
     ports: 
       - "80:80"
-    env_file:
-      - ".env"
+    env_file: .env
+    working_dir: /app/perceiver_service/src
     volumes:
-      - perceiver_service:/perceiver_service
+      - ./perceiver_service/src:/app/perceiver_service/src
       - logs:/logs
     depends_on:
       postgres:
@@ -24,9 +25,9 @@ services:
   postgres:
     image: pgvector/pgvector:pg18
     environment:
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE__USER}
+      POSTGRES_PASSWORD: ${DATABASE__PASSWORD}
+      POSTGRES_DB: ${DATABASE__NAME}
     ports:
       - "${DATABASE_PORT:-5432}:5432"
     volumes:
@@ -66,13 +67,13 @@ services:
     restart: unless-stopped
 
   rabbitmq:
-    image: rabbitmq:4.3-management-alpine
+    image: rabbitmq:3.13-management-alpine
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
-      RABBITMQ_USER: ${RABBITMQ_USER:-guest}
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-guest}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ__USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ__PASSWORD:-guest}
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
@@ -83,9 +84,43 @@ services:
       start_period: 10s
     restart: unless-stopped
 
+  celery_worker:
+    image: perceiver_work_twin:latest
+    working_dir: /app/perceiver_service/src
+    volumes:
+      - ./perceiver_service/src:/app/perceiver_service/src
+    command: ["celery", "-A", "core", "worker", "-l", "info",
+              "-Q", "ingestion_high"]
+    env_file: .env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  celery_flower:
+    image: perceiver_work_twin:latest
+    working_dir: /app/perceiver_service/src
+    command: ['celery', '-A', 'core', 'flower', '--port=5555']
+    volumes:
+      - ./perceiver_service/src:/app/perceiver_service/src
+    ports:
+      - "5555:5555"
+    env_file: .env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
 volumes:
   postgres_data:
   pgadmin:
   logs:
   rabbitmq_data:
-  perceiver_service:
