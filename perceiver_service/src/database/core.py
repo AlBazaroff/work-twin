@@ -13,7 +13,7 @@ from sqlalchemy.orm import DeclarativeBase
 from config import settings
 
 
-def create_async_db_engine(connection_string: str) -> AsyncEngine:
+def create_async_db_engine(connection_string: str, **kwargs) -> AsyncEngine:
     """Create a database engine with proper timeout settings.
 
     Args:
@@ -31,10 +31,15 @@ def create_async_db_engine(connection_string: str) -> AsyncEngine:
         # Connection pre-ping to verify connection is still alive
         "pool_pre_ping": settings.database.engine_pool_ping,
     }
-    return create_async_engine(connection_string, **timeout_kwargs)
+    kwargs.update(timeout_kwargs)
+    return create_async_engine(connection_string, **kwargs)
 
 
-engine = create_async_db_engine(settings.database.connection_url)
+engine = create_async_db_engine(
+    settings.database.connection_url,
+    pool_pre_ping=True,
+    pool_reset_on_return="rollback",
+)
 
 AsyncSessionLocal = async_sessionmaker(bind=engine)
 
@@ -53,6 +58,9 @@ async def get_db():
     async with AsyncSessionLocal() as session:
         try:
             yield session
+        except Exception:
+            await session.rollback()
+            raise
         finally:
             await session.close()
 
