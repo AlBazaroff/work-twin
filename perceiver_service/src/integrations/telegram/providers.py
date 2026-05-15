@@ -7,7 +7,7 @@ from config import Settings
 from core.exceptions.providers import ProviderCredentialsNotFoundError
 from core.providers.base import SocialProvider
 from database.enums import Integration
-from perceiver_service.src.ingestion.schemas import BaseCredentials
+from ingestion.schemas import BaseCredentials
 from .schemas import TelegramCredentials
 
 

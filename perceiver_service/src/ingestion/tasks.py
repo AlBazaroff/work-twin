@@ -30,7 +30,11 @@ async def ingest_user_integration_data(payload):
     payload = UserIntegrationTaskPayload.model_validate_json(payload)
     async with get_db() as session:
         service = IngestionService(session)
-        (user, integration) = await service.pass_user_integration_data(payload)
+        response = await service.pass_user_integration_data(payload)
+
+        user = response.user
+        integration = response.integration
+
         logger.info(
             f"Added new integration: {integration.integration}"
             f" for user: {user.id}"

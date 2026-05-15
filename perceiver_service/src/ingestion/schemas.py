@@ -1,8 +1,9 @@
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from database.enums import Integration, UserStatus
+from database.models.user import User, UserIntegration
 
 
 class BaseCredentials(BaseModel):
@@ -30,3 +31,12 @@ class IntegrationDataAnalysisTaskPayload(BaseModel):
     """Schema for user integrations data analysis task."""
 
     integration_id: UUID
+
+
+class UserIntegrationResponse(BaseModel):
+    """Schema for user integration response."""
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    user: User
+    integration: UserIntegration

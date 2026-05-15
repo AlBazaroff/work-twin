@@ -7,7 +7,10 @@ from database.core import AsyncSession
 from database.enums import UserStatus
 from database.models.user import User, UserIntegration
 from core.providers.factory import ProviderFactory
-from ingestion.schemas import UserIntegrationTaskPayload
+from ingestion.schemas import (
+    UserIntegrationTaskPayload,
+    UserIntegrationResponse,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +40,7 @@ class IngestionService:
 
     async def pass_user_integration_data(
         self, payload: UserIntegrationTaskPayload
-    ):
+    ) -> UserIntegrationResponse:
         """Pass user integration data from payload."""
         user_id = payload.user_id
         integration = payload.integration
@@ -60,4 +63,4 @@ class IngestionService:
             f"Added new integration: {integration} for user: {user_id}"
         )
 
-        return (user, new_integration)
+        return UserIntegrationResponse(user=user, integration=new_integration)
