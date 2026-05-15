@@ -1,8 +1,14 @@
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
-from database.enums import Integration
+from database.enums import Integration, UserStatus
+
+
+class BaseCredentials(BaseModel):
+    """Base credentials for all providers."""
+
+    pass
 
 
 class UserIntegrationTaskPayload(BaseModel):
@@ -16,4 +22,11 @@ class UserIntegrationTaskPayload(BaseModel):
 
     user_id: UUID
     integration: Integration
-    credentials: dict
+    status: UserStatus = Field(default=UserStatus.UNPAID)
+    credentials: BaseCredentials
+
+
+class IntegrationDataAnalysisTaskPayload(BaseModel):
+    """Schema for user integrations data analysis task."""
+
+    integration_id: UUID

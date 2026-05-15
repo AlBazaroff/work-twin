@@ -5,6 +5,9 @@ from kombu import Queue
 
 from config import settings
 
+high_queue = Queue("ingestion_high", durable=True)
+heavy_queue = Queue("ingestion_heavy", durable=True)
+
 app = Celery(
     "perceiver",
     broker=str(settings.rabbitmq.connection_url),
@@ -15,14 +18,17 @@ app.conf.update(
     task_default_delivery_mode="persistent",
     # Queues
     task_queues=(
-        Queue(
-            "ingestion_high",
-            durable=True,
-        ),
+        high_queue,
+        heavy_queue,
     ),
     # Routes
     task_routes={
-        "ingestion.tasks.ingest_user_data": {"queue": "ingestion_high"}
+        "ingestion.tasks.ingest_user_data": {
+            "queue": high_queue.name,
+        },
+        "ingestion.tasks.analyze_integration_data": {
+            "queue": heavy_queue.name,
+        },
     },
     # RabbitMQ publish confirmation
     broker_transport_options={
