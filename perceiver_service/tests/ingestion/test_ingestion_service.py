@@ -3,18 +3,10 @@
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-from uuid6 import uuid7
 
 from src.database.enums import Integration, UserStatus
 from src.database.models.user import User
-from src.ingestion.schemas import UserIntegrationTaskPayload
 from src.ingestion.services import IngestionService
-from src.integrations.telegram.schemas import TelegramCredentials
-
-
-@pytest.fixture
-def user_id():
-    return uuid7()
 
 
 @pytest.fixture
@@ -27,17 +19,6 @@ def mock_session(user_id):
     session.execute = AsyncMock(return_value=result)
     session.commit = AsyncMock()
     return session, user
-
-
-@pytest.fixture
-def payload(user_id):
-    """Provide a sample UserIntegrationTaskPayload for testing."""
-    return UserIntegrationTaskPayload(
-        user_id=user_id,
-        integration=Integration.TELEGRAM,
-        status=UserStatus.PAID,
-        credentials=TelegramCredentials(session_string="sess"),
-    )
 
 
 class TestIngestionService:
@@ -60,7 +41,7 @@ class TestIngestionService:
     @pytest.mark.asyncio
     @patch("src.ingestion.services.ProviderFactory.get_provider")
     async def test_pass_user_integration_data_creates_integration(
-        self, mock_get_provider, mock_session, payload
+        self, mock_get_provider, mock_session, user_integration_payload
     ):
         """
         Test that pass_user_integration_data creates a new integration
@@ -72,11 +53,13 @@ class TestIngestionService:
         mock_get_provider.return_value = mock_provider
 
         service = IngestionService(session)
-        response = await service.pass_user_integration_data(payload)
+        response = await service.pass_user_integration_data(
+            user_integration_payload
+        )
 
         mock_get_provider.assert_called_once_with(Integration.TELEGRAM)
         mock_provider.get_identity.assert_awaited_once_with(
-            payload.credentials
+            user_integration_payload.credentials
         )
         session.execute.assert_awaited_once()
         session.commit.assert_awaited_once()
@@ -86,12 +69,12 @@ class TestIngestionService:
         integration = response.integration
         assert integration.integration == Integration.TELEGRAM
         assert integration.integration_user_id == "12345"
-        assert integration.credentials == payload.credentials
+        assert integration.credentials == user_integration_payload.credentials
 
     @pytest.mark.asyncio
     @patch("src.ingestion.services.ProviderFactory.get_provider")
     async def test_propagates_provider_not_found(
-        self, mock_get_provider, mock_session, payload
+        self, mock_get_provider, mock_session, user_integration_payload
     ):
         """
         Test pass_user_integration_data propagates
@@ -104,6 +87,6 @@ class TestIngestionService:
 
         service = IngestionService(session)
         with pytest.raises(ProviderNotFoundError):
-            await service.pass_user_integration_data(payload)
+            await service.pass_user_integration_data(user_integration_payload)
 
         session.commit.assert_not_awaited()
