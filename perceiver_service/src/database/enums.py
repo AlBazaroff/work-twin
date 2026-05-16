@@ -24,8 +24,8 @@ class KnowledgeSourceType(Enum):
         GROUP_CHAT: messages from group chats
     """
 
-    PRIVATE_CHAT = ("private chat",)
-    GROUP_CHAT = ("group chat",)
+    PRIVATE_CHAT = "private chat"
+    GROUP_CHAT = "group chat"
 
 
 class UserStatus(Enum):

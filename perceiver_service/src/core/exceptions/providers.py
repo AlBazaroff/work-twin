@@ -15,7 +15,7 @@ class ProviderNotFoundError(ProviderError):
     message = "Provider '{0}' not found"
 
     def __init__(self, provider_name: str):
-        super().__init__(provider_name)
+        super().__init__(self.message.format(provider_name))
 
 
 class ProviderCredentialsNotFoundError(ProviderError):
@@ -24,4 +24,4 @@ class ProviderCredentialsNotFoundError(ProviderError):
     message = "Credentials for provider '{0}' not found"
 
     def __init__(self, provider_name: str):
-        super().__init__(provider_name)
+        super().__init__(self.message.format(provider_name))

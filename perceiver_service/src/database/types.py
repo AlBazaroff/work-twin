@@ -11,7 +11,7 @@ cipher = Fernet(SECRET)
 
 
 class EncryptedString(TypeDecorator):
-    """Encrypt string column, decrypt when extracting."""
+    """Encrypt string when recording, decrypt when extracting."""
 
     impl = String
 
@@ -31,7 +31,7 @@ class EncryptedString(TypeDecorator):
 
 
 class EncryptedJSON(TypeDecorator):
-    """Encrypt JSON when recording, decrypted when extracting."""
+    """Encrypt JSON when recording, decrypt when extracting."""
 
     impl = String
 
