@@ -4,12 +4,12 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.core.exceptions.providers import ProviderNotFoundError
-from src.core.providers.base import BaseProvider
-from src.core.providers.factory import ProviderFactory
-from src.database.enums import Integration
-from src.ingestion.schemas import BaseCredentials
-from src.integrations.telegram.providers import TelegramProvider
+from core.exceptions.providers import ProviderNotFoundError
+from core.providers.base import BaseProvider
+from core.providers.factory import ProviderFactory
+from database.enums import Integration
+from ingestion.schemas import BaseCredentials
+from integrations.telegram.providers import TelegramProvider
 
 
 class TestProviderFactory:
@@ -27,7 +27,10 @@ class TestProviderFactory:
         """
         with pytest.raises(ProviderNotFoundError) as exc_info:
             ProviderFactory.get_provider(Integration.SLACK)
-        assert str(exc_info.value) == Integration.SLACK.value
+        assert (
+            str(exc_info.value)
+            == f"Provider '{Integration.SLACK.value}' not found"
+        )
 
     def test_register_adds_custom_provider(self):
         """

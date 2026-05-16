@@ -3,8 +3,8 @@
 import pytest
 from pydantic import ValidationError
 
-from src.integrations.telegram.schemas import TelegramCredentials
-from src.database.enums import Integration
+from database.enums import Integration
+from integrations.telegram.schemas import TelegramCredentials
 
 
 @pytest.fixture

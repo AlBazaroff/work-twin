@@ -1,9 +1,9 @@
 import pytest
 from uuid6 import uuid7
 
-from src.database.enums import UserStatus, Integration
-from src.ingestion.schemas import UserIntegrationTaskPayload
-from src.integrations.telegram.schemas import TelegramCredentials
+from database.enums import Integration, UserStatus
+from ingestion.schemas import UserIntegrationTaskPayload
+from integrations.telegram.schemas import TelegramCredentials
 
 
 @pytest.fixture

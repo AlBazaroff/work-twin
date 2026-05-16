@@ -6,12 +6,12 @@ import pytest
 from pydantic import ValidationError
 from uuid6 import uuid7
 
-from src.database.enums import Integration, UserStatus
-from src.ingestion.schemas import (
+from database.enums import Integration, UserStatus
+from ingestion.schemas import (
     IntegrationDataAnalysisTaskPayload,
     UserIntegrationTaskPayload,
 )
-from src.integrations.telegram.schemas import TelegramCredentials
+from integrations.telegram.schemas import TelegramCredentials
 
 
 @pytest.fixture

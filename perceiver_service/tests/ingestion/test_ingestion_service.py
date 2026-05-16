@@ -4,9 +4,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from src.database.enums import Integration, UserStatus
-from src.database.models.user import User
-from src.ingestion.services import IngestionService
+from database.enums import Integration, UserStatus
+from database.models.user import User
+from ingestion.services import IngestionService
 
 
 @pytest.fixture
@@ -39,7 +39,7 @@ class TestIngestionService:
         assert result is user
 
     @pytest.mark.asyncio
-    @patch("src.ingestion.services.ProviderFactory.get_provider")
+    @patch("ingestion.services.ProviderFactory.get_provider")
     async def test_pass_user_integration_data_creates_integration(
         self, mock_get_provider, mock_session, user_integration_payload
     ):
@@ -72,7 +72,7 @@ class TestIngestionService:
         assert integration.credentials == user_integration_payload.credentials
 
     @pytest.mark.asyncio
-    @patch("src.ingestion.services.ProviderFactory.get_provider")
+    @patch("ingestion.services.ProviderFactory.get_provider")
     async def test_propagates_provider_not_found(
         self, mock_get_provider, mock_session, user_integration_payload
     ):
@@ -80,7 +80,7 @@ class TestIngestionService:
         Test pass_user_integration_data propagates
         ProviderNotFoundError.
         """
-        from src.core.exceptions.providers import ProviderNotFoundError
+        from core.exceptions.providers import ProviderNotFoundError
 
         session, _user = mock_session
         mock_get_provider.side_effect = ProviderNotFoundError("slack")

@@ -1,14 +1,14 @@
 """Tests for TelegramProvider identity and credentials handling."""
 
-import os
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from src.core.exceptions.providers import ProviderCredentialsNotFoundError
-from src.database.enums import Integration
-from src.integrations.telegram.providers import TelegramProvider
-from src.integrations.telegram.schemas import TelegramCredentials
+from config import settings
+from core.exceptions.providers import ProviderCredentialsNotFoundError
+from database.enums import Integration
+from integrations.telegram.providers import TelegramProvider
+from integrations.telegram.schemas import TelegramCredentials
 
 
 @pytest.fixture
@@ -24,11 +24,9 @@ class TestTelegramProviderFromSettings:
         Test telegram provider is correctly created from settings
         from environment variables.
         """
-        from src.config import settings
-
         instance = TelegramProvider.from_settings(settings)
-        assert instance._api_id == os.getenv("TELEGRAM__API_ID")
-        assert instance._api_hash == os.getenv("TELEGRAM__API_HASH")
+        assert instance._api_id == settings.telegram.api_id
+        assert instance._api_hash == settings.telegram.api_hash
         assert isinstance(instance, TelegramProvider)
 
 
@@ -41,13 +39,13 @@ class TestTelegramProviderGetIdentity:
         Test that NotFound error is raised
         when session string is empty.
         """
-        credentials = TelegramCredentials(session_string="")
+        credentials = TelegramCredentials.model_construct(session_string="")
         with pytest.raises(ProviderCredentialsNotFoundError):
             await provider.get_identity(credentials)
 
     @pytest.mark.asyncio
-    @patch("src.integrations.telegram.providers.TelegramClient")
-    @patch("src.integrations.telegram.providers.StringSession")
+    @patch("integrations.telegram.providers.TelegramClient")
+    @patch("integrations.telegram.providers.StringSession")
     async def test_returns_telegram_user_id_as_string(
         self, mock_session_cls, mock_client_cls, provider
     ):

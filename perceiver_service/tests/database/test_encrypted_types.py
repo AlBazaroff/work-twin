@@ -5,7 +5,7 @@ import json
 import pytest
 from sqlalchemy import Dialect
 
-from src.database.types import EncryptedJSON, EncryptedString
+from database.types import EncryptedJSON, EncryptedString
 
 
 class _StubDialect(Dialect):

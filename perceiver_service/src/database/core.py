@@ -19,19 +19,21 @@ def create_async_db_engine(connection_string: str, **kwargs) -> AsyncEngine:
     Args:
         connection_string: Database connection string
     """
-    timeout_kwargs = {
-        # Connection timeout - how long to wait for a connection from the pool
-        "pool_timeout": settings.database.engine_pool_timeout,
-        # Recycle connections after this many seconds
-        "pool_recycle": settings.database.engine_pool_recycle,
-        # Maximum number of connections to keep in the pool
-        "pool_size": settings.database.engine_pool_size,
-        # Maximum overflow connections allowed beyond pool_size
-        "max_overflow": settings.database.engine_max_overflow,
-        # Connection pre-ping to verify connection is still alive
-        "pool_pre_ping": settings.database.engine_pool_ping,
-    }
-    kwargs.update(timeout_kwargs)
+    if not connection_string.startswith("sqlite"):
+        kwargs.update(
+            {
+                # Connection timeout - how long to wait for a connection
+                "pool_timeout": settings.database.engine_pool_timeout,
+                # Recycle connections after this many seconds
+                "pool_recycle": settings.database.engine_pool_recycle,
+                # Maximum number of connections to keep in the pool
+                "pool_size": settings.database.engine_pool_size,
+                # Maximum overflow connections allowed beyond pool_size
+                "max_overflow": settings.database.engine_max_overflow,
+                # Connection pre-ping to verify connection is still alive
+                "pool_pre_ping": settings.database.engine_pool_ping,
+            }
+        )
     return create_async_engine(connection_string, **kwargs)
 
 

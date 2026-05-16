@@ -44,8 +44,11 @@ class DBSettings(BaseModel):
         """Compute connection URL from components."""
         if data.get("connection_url") is None:
             data["connection_url"] = (
-                f"{data['provider']}://{data['user']}:{data['password']}@"
-                f"{data['hostname']}:{data['port']}/{data['name']}"
+                f"{data.get('provider', 'postgresql+asyncpg')}://"
+                f"{data.get('user', 'admin')}:{data.get('password', 'admin')}@"
+                f"{data.get('hostname', '127.0.0.1')}:"
+                f"{data.get('port', '5432')}/"
+                f"{data.get('name', 'perceiver_work_twin')}"
             )
         return data
 

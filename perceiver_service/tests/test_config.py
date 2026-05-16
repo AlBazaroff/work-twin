@@ -3,7 +3,7 @@
 import pytest
 from typing import TypedDict
 
-from src.config import DBSettings, RabbitMQSettings, TelegramSettings
+from config import DBSettings, RabbitMQSettings, TelegramSettings
 
 
 class AuthSettings(TypedDict):
@@ -38,14 +38,14 @@ class TestRabbitMQSettings:
     def test_connection_url_formats_amqp_uri(self, infr_auth):
         """Test connection URL is correctly formatted for RabbitMQ."""
         settings = RabbitMQSettings(
-            user=infr_auth.user,
-            password=infr_auth.password,
-            hostname=infr_auth.hostname,
+            user=infr_auth["user"],
+            password=infr_auth["password"],
+            hostname=infr_auth["hostname"],
             port="5672",
         )
         assert settings.connection_url == (
-            f"amqp://{infr_auth.user}:{infr_auth.password}"
-            f"@{infr_auth.hostname}:5672/"
+            f"amqp://{infr_auth['user']}:{infr_auth['password']}"
+            f"@{infr_auth['hostname']}:5672/"
         )
 
 
@@ -56,17 +56,17 @@ class TestDBSettings:
         for asyncpg and includes all components.
         """
         settings = DBSettings(
-            user=infr_auth.user,
-            password=infr_auth.password,
-            hostname=infr_auth.hostname,
+            user=infr_auth["user"],
+            password=infr_auth["password"],
+            hostname=infr_auth["hostname"],
             port="5433",
             name="mydb",
         )
         url = settings.connection_url
         assert url.startswith("postgresql+asyncpg://")
         assert (
-            f"{infr_auth.user}:{infr_auth.password}@"
-            f"{infr_auth.hostname}:5433/mydb"
+            f"{infr_auth['user']}:{infr_auth['password']}@"
+            f"{infr_auth['hostname']}:5433/mydb"
         ) in url
 
     def test_defaults_for_pool_settings(self):
@@ -83,8 +83,8 @@ class TestTelegramSettings:
     def test_requires_api_credentials(self, telegram_settings):
         """Test that TelegramSettings requires api_id and api_hash."""
         settings = TelegramSettings(
-            api_id=telegram_settings.api_id,
-            api_hash=telegram_settings.api_hash,
+            api_id=telegram_settings["api_id"],
+            api_hash=telegram_settings["api_hash"],
         )
-        assert settings.api_id == telegram_settings.api_id
-        assert settings.api_hash == telegram_settings.api_hash
+        assert settings.api_id == telegram_settings["api_id"]
+        assert settings.api_hash == telegram_settings["api_hash"]

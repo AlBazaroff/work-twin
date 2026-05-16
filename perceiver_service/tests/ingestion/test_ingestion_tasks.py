@@ -2,18 +2,16 @@
 
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
 from uuid6 import uuid7
 
-from src.database.enums import UserStatus
+from database.enums import UserStatus
 
 
 class TestIngestUserIntegrationDataTask:
-    @pytest.mark.asyncio
-    @patch("src.ingestion.tasks.analyze_user_integration_data")
-    @patch("src.ingestion.tasks.get_db")
-    @patch("src.ingestion.tasks.IngestionService")
-    async def test_schedules_analysis_for_paid_user(
+    @patch("ingestion.tasks.analyze_user_integration_data")
+    @patch("ingestion.tasks.get_db")
+    @patch("ingestion.tasks.IngestionService")
+    def test_schedules_analysis_for_paid_user(
         self,
         mock_service_cls,
         mock_get_db,
@@ -21,7 +19,7 @@ class TestIngestUserIntegrationDataTask:
         user_integration_payload,
     ):
         """Test adding analysis task for paid user."""
-        from src.ingestion.tasks import ingest_user_integration_data
+        from ingestion.tasks import ingest_user_integration_data
 
         integration_id = uuid7()
 
@@ -45,7 +43,7 @@ class TestIngestUserIntegrationDataTask:
         )
         mock_get_db.return_value.__aexit__ = AsyncMock(return_value=None)
 
-        await ingest_user_integration_data(
+        ingest_user_integration_data.run(
             user_integration_payload.model_dump_json()
         )
 
@@ -53,11 +51,10 @@ class TestIngestUserIntegrationDataTask:
         delay_arg = mock_analyze_task.delay.call_args[0][0]
         assert str(integration_id) in delay_arg
 
-    @pytest.mark.asyncio
-    @patch("src.ingestion.tasks.analyze_user_integration_data")
-    @patch("src.ingestion.tasks.get_db")
-    @patch("src.ingestion.tasks.IngestionService")
-    async def test_skips_analysis_for_unpaid_user(
+    @patch("ingestion.tasks.analyze_user_integration_data")
+    @patch("ingestion.tasks.get_db")
+    @patch("ingestion.tasks.IngestionService")
+    def test_skips_analysis_for_unpaid_user(
         self,
         mock_service_cls,
         mock_get_db,
@@ -65,7 +62,7 @@ class TestIngestUserIntegrationDataTask:
         user_integration_payload,
     ):
         """Test skip adding analysis task for unpaid user."""
-        from src.ingestion.tasks import ingest_user_integration_data
+        from ingestion.tasks import ingest_user_integration_data
 
         mock_user = MagicMock(status=UserStatus.UNPAID)
         mock_response = MagicMock(
@@ -81,7 +78,7 @@ class TestIngestUserIntegrationDataTask:
         )
         mock_get_db.return_value.__aexit__ = AsyncMock(return_value=None)
 
-        await ingest_user_integration_data(
+        ingest_user_integration_data.run(
             user_integration_payload.model_dump_json()
         )
 
