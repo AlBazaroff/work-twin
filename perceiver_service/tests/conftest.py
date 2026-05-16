@@ -2,6 +2,7 @@
 
 import os
 
+import pytest
 from cryptography.fernet import Fernet
 
 # Settings and encrypted column types load at import time; set env first.
@@ -15,3 +16,8 @@ os.environ.setdefault("TELEGRAM__API_HASH", "test_api_hash")
 os.environ.setdefault(
     "DATABASE__CONNECTION_URL", "sqlite+aiosqlite:///:memory:"
 )
+
+
+@pytest.fixture
+def valid_tg_session_string():
+    return "valid_session_string"

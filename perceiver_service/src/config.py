@@ -1,4 +1,4 @@
-from pydantic import Field, BaseModel
+from pydantic import Field, BaseModel, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -29,6 +29,8 @@ class DBSettings(BaseModel):
     hostname: str = Field(default="127.0.0.1")
     port: str = Field(default="5432")
     name: str = Field(default="perceiver_work_twin")
+    provider: str = Field(default="postgresql+asyncpg")
+    connection_url: str | None = Field(default=None)
 
     engine_pool_ping: bool = Field(default=False)
     engine_pool_recycle: int = Field(default=3600)
@@ -36,12 +38,16 @@ class DBSettings(BaseModel):
     engine_pool_timeout: int = Field(default=30)
     engine_max_overflow: int = Field(default=10)
 
-    @property
-    def connection_url(self):
-        return (
-            f"postgresql+asyncpg://{self.user}:{self.password}@"
-            f"{self.hostname}:{self.port}/{self.name}"
-        )
+    @model_validator(mode="before")
+    @classmethod
+    def compute_connection_url(cls, data: dict) -> dict:
+        """Compute connection URL from components."""
+        if data.get("connection_url") is None:
+            data["connection_url"] = (
+                f"{data['provider']}://{data['user']}:{data['password']}@"
+                f"{data['hostname']}:{data['port']}/{data['name']}"
+            )
+        return data
 
 
 class Settings(BaseSettings):

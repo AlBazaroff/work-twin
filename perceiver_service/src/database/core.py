@@ -36,7 +36,7 @@ def create_async_db_engine(connection_string: str, **kwargs) -> AsyncEngine:
 
 
 engine = create_async_db_engine(
-    settings.database.connection_url,
+    settings.database.connection_url,  # type: ignore
     pool_pre_ping=True,
     pool_reset_on_return="rollback",
 )

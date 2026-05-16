@@ -46,8 +46,8 @@ class TestTelegramProviderGetIdentity:
             await provider.get_identity(credentials)
 
     @pytest.mark.asyncio
-    @patch("integrations.telegram.providers.TelegramClient")
-    @patch("integrations.telegram.providers.StringSession")
+    @patch("src.integrations.telegram.providers.TelegramClient")
+    @patch("src.integrations.telegram.providers.StringSession")
     async def test_returns_telegram_user_id_as_string(
         self, mock_session_cls, mock_client_cls, provider
     ):
