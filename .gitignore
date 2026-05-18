@@ -142,3 +142,5 @@ __marimo__/
 # Logs
 *.session
 *.log
+
+.DS_Store
