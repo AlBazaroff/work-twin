@@ -8,7 +8,7 @@ WorkTwin is a "Digital Twin" system that mimics your professional persona. It do
 
 ## 🛠 Tech Stack
 
-* FastAPI: Async entry point for the Inference API.
+* FastAPI: Async entry point for the Perceiver API.
 * PostgreSQL + PGVector: Unified storage for relational data and high-dimensional vectors (1536 dims).
 * SQLAlchemy 2.0: Shared ORM models for data consistency across services.
 * LangGraph: Orchestration of the agentic "Knowledge Gating" loop.
@@ -20,17 +20,14 @@ WorkTwin is a "Digital Twin" system that mimics your professional persona. It do
 
 ## 🏗 System Architecture
 
-The project is split into two independent services communicating via **RabbitMQ** (Signals) and **PostgreSQL** (Shared Knowledge).
+It's a microservice via **RabbitMQ** (Signals) and endpoint on **FastAPI**.
 
 1. 📥 **Perceiver Service (The Student)**
 * Role: Scans historical data, extracts "Style Markers," and populates the brain.
-* Tech: Python, Celery, Redis, SQLAlchemy.
-* Core Logic: Batch processing of message history -> Sentiment & Style Analysis -> Vector Indexing.
-
-2. 🧠 **Inference Engine (The Double)**
-* Role: The real-time reasoning core. Decision-making via LangGraph.
-* Tech: FastAPI, LangGraph, LangChain, PGVector.
-* Core Logic: State-machine RAG (Retrieve -> Score -> Mimic -> Respond/Escalate).
+* Tech: Python, Celery, Redis, SQLAlchemy, FastAPI.
+* Core Logic: 
+    - Batch processing of message history -> Sentiment & Style Analysis -> Vector Indexing & Creating Profiles.
+    - Receive request from inference service -> Find profile & Attach appropriate context -> Response.
 
 ---
 
@@ -40,8 +37,7 @@ The project is split into two independent services communicating via **RabbitMQ*
 ```bash
 git clone https://github.com/AlBazaroff/work-twin
 cd work-twin
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
+uv sync
 
 ```
 
