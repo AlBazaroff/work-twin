@@ -8,9 +8,22 @@ from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
 
+from core.const.errors.base import INTERNAL_ERROR_MESSAGE
+
 logger = logging.getLogger("perceiver.middleware")
 
 correlation_id: ContextVar[str] = ContextVar("correlation_id", default="")
+
+
+def _calc_process_time(start_time: float) -> float:
+    """
+    Calculate process time base on start_time(got by perf_counter())
+    Return time in ms.
+
+    Args:
+        start_time: time when process started
+    """
+    return (time.perf_counter() - start_time) * 1000
 
 
 class CorrelationIdMiddleware(BaseHTTPMiddleware):
@@ -47,13 +60,14 @@ class EnhancedLoggingMiddleware(BaseHTTPMiddleware):
                 f"[{c_id}] Request: {request.method} {request.url.path}"
             )
             response = await call_next(request)
-            process_time = (time.perf_counter() - start_time) * 1000
+            process_time = _calc_process_time(start_time)
             logger.info(
                 f"[{c_id}] Response: {response.status_code} "
                 f"| Time: {process_time:.2f}ms"
             )
             return response
         except Exception as exc:
+            process_time = _calc_process_time(start_time)
             logger.error(
                 f"[{c_id}] Critical Failure: {str(exc)} "
                 f"| Time: {process_time:.2f}ms",
@@ -62,7 +76,7 @@ class EnhancedLoggingMiddleware(BaseHTTPMiddleware):
             return JSONResponse(
                 status_code=500,
                 content={
-                    "error": "Internal Server Error",
+                    "error": INTERNAL_ERROR_MESSAGE,
                     "corrlation_id": c_id,
                 },
             )

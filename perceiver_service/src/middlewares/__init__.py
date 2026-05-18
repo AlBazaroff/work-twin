@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 
-from middleware.logging import (
+from middlewares.logging import (
     CorrelationIdMiddleware,
     EnhancedLoggingMiddleware,
 )

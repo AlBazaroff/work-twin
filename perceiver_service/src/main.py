@@ -6,9 +6,8 @@ from fastapi import FastAPI
 
 from core.exceptions.exception_handlers import register_exception_handlers
 from database.core import engine
-from middleware import register_middlewares
-
-from router import create_api_router
+from middlewares import register_middlewares
+from router import router as api_router
 
 APP_TITLE = "Work Twin Perceiver"
 APP_VERSION = "0.1.0"
@@ -31,7 +30,6 @@ def create_app() -> FastAPI:
     )
     register_middlewares(app)
     register_exception_handlers(app)
-    api_router = create_api_router()
     app.include_router(api_router)
     return app
 
