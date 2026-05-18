@@ -1,3 +1,5 @@
+"""Specific configs for ingestion."""
+
 import pytest
 from uuid6 import uuid7
 
