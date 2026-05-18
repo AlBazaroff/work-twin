@@ -12,16 +12,18 @@ class ProviderError(BaseException):
 class ProviderNotFoundError(ProviderError):
     """Raised when a provider is not found."""
 
-    message = "Provider '{0}' not found"
+    _template = "Provider '{0}' not found"
 
     def __init__(self, provider_name: str):
-        super().__init__(self.message.format(provider_name))
+        self.message = self._template.format(provider_name)
+        super().__init__(self.message)
 
 
 class ProviderCredentialsNotFoundError(ProviderError):
     """Raised when provider credentials are not found."""
 
-    message = "Credentials for provider '{0}' not found"
+    _template = "Credentials for provider '{0}' not found"
 
     def __init__(self, provider_name: str):
-        super().__init__(self.message.format(provider_name))
+        self.message = self._template.format(provider_name)
+        super().__init__(self.message)

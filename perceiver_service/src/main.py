@@ -4,8 +4,11 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from core.exceptions.exception_handlers import register_exception_handlers
 from database.core import engine
 from middleware import register_middlewares
+
+from router import create_api_router
 
 APP_TITLE = "Work Twin Perceiver"
 APP_VERSION = "0.1.0"
@@ -13,8 +16,10 @@ APP_VERSION = "0.1.0"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    yield
-    await engine.dispose()
+    try:
+        yield
+    finally:
+        await engine.dispose()
 
 
 def create_app() -> FastAPI:
@@ -25,6 +30,9 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
     register_middlewares(app)
+    register_exception_handlers(app)
+    api_router = create_api_router()
+    app.include_router(api_router)
     return app
 
 
