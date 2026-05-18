@@ -4,6 +4,9 @@ import os
 
 import pytest
 from cryptography.fernet import Fernet
+from fastapi.testclient import TestClient
+
+from main import app
 
 # Settings and encrypted column types load at import time; set env first.
 os.environ.setdefault("SECRET_KEY", Fernet.generate_key().decode())
@@ -21,3 +24,10 @@ os.environ.setdefault(
 @pytest.fixture
 def valid_tg_session_string():
     return "valid_session_string"
+
+
+@pytest.fixture
+def client():
+    """Fixture for FastAPI test client."""
+    with TestClient(app) as test_client:
+        yield test_client
