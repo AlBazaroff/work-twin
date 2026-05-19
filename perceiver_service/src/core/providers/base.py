@@ -1,3 +1,5 @@
+"""Base factory and provider classes."""
+
 from abc import ABC, abstractmethod
 
 from database.enums import Integration
