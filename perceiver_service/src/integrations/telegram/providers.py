@@ -4,7 +4,7 @@ from telethon import TelegramClient
 from telethon.sessions import StringSession
 
 from config import Settings
-from core.exception.providers import ProviderCredentialsNotFoundError
+from core.providers.exceptions import ProviderCredentialsNotFoundError
 from core.providers.base import SocialProvider
 from database.enums import Integration
 from ingestion.schemas import BaseCredentials

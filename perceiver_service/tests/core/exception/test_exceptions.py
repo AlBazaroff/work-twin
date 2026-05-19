@@ -3,9 +3,9 @@
 import pytest
 
 from core.exception.base import BaseException
-from core.exception.providers import (
+from core.exception.factory import EntityNotFoundError
+from core.providers.exceptions import (
     ProviderCredentialsNotFoundError,
-    ProviderError,
     ProviderNotFoundError,
 )
 
@@ -47,7 +47,7 @@ class TestProviderExceptions:
         with the provider name.
         """
         exc = ProviderNotFoundError(provider)
-        assert isinstance(exc, ProviderError)
+        assert isinstance(exc, EntityNotFoundError)
         assert provider in str(exc)
         assert "not found" in str(exc)
 
@@ -64,5 +64,5 @@ class TestProviderExceptions:
         """
         Test that provider exceptions inherit from BaseException
         """
-        with pytest.raises(ProviderError):
+        with pytest.raises(EntityNotFoundError):
             raise ProviderNotFoundError("unknown")

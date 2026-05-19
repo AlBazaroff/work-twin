@@ -4,8 +4,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from core.exception.providers import ProviderNotFoundError
 from core.providers.base import BaseProvider
+from core.providers.exceptions import ProviderNotFoundError
 from core.factory.provider_factory import ProviderFactory
 from database.enums import Integration
 from ingestion.schemas import BaseCredentials

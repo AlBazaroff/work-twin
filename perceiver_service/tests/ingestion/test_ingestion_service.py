@@ -80,7 +80,7 @@ class TestIngestionService:
         Test pass_user_integration_data propagates
         ProviderNotFoundError.
         """
-        from core.exception.providers import ProviderNotFoundError
+        from core.providers.exceptions import ProviderNotFoundError
 
         session, _user = mock_session
         mock_get_provider.side_effect = ProviderNotFoundError("slack")

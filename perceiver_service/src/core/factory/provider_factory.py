@@ -1,7 +1,7 @@
 from typing import Type
 
 from config import settings
-from core.exception.providers import ProviderNotFoundError
+from core.providers.exceptions import ProviderNotFoundError
 from core.providers.base import BaseProvider
 from database.enums import Integration
 from integrations.telegram.providers import TelegramProvider
@@ -17,12 +17,17 @@ class ProviderFactory(RegistryFactory):
 
     @classmethod
     def register(
-        cls, provider_cls: Type[BaseProvider], integration: Integration
+        cls,
+        provider_cls: Type[BaseProvider],
+        integration: Integration,
+        *args,
+        **kwargs,
     ):
         """Register new provider class in registry.
 
         Args:
             provider_cls: class of provider
+            integration: registered Integration
         """
         cls._registry[integration] = provider_cls
 

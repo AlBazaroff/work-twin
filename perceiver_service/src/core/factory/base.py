@@ -15,7 +15,7 @@ class RegistryFactory(BaseFactory, ABC):
 
     @classmethod
     @abstractmethod
-    def register(cls, entity_cls: Type, entity_key):
+    def register(cls, entity_cls: Type, entity_key, *args, **kwargs):
         """Method for register new entities."""
         pass
 
