@@ -23,3 +23,9 @@ jobs:
 
       - name: Install the project
         run: uv sync --locked --all-extras --dev
+
+      - name: Create .env
+        run: echo "${{ secrets.TEST_ENV_FILE_CONTENT }}" > .env
+
+      - name: Run tests and check coverage
+        run: uv run coverage run --source=perceiver_service/src -m pytest && uv run coverage report --fail-under=80

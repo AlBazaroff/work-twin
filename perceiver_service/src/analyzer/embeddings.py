@@ -7,8 +7,8 @@ from langchain_core.embeddings import Embeddings
 from langchain_google_genai.embeddings import GoogleGenerativeAIEmbeddings
 from langchain_ollama.embeddings import OllamaEmbeddings
 
-from core.factory.base import RegistryFactory
 from config import get_settings
+from core.factory.base import RegistryFactory
 from .exceptions import EmbeddingNotFoundError
 
 settings = get_settings()

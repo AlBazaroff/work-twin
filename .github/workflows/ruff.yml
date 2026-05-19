@@ -26,6 +26,3 @@ jobs:
 
       - name: Run ruff check
         run: uv run ruff check --output-format=github
-
-      - name: Run tests and check coverage
-        run: uv run coverage run --source=perceiver_service/src -m pytest && uv run coverage report --fail-under=80
