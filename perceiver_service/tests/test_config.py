@@ -3,7 +3,12 @@
 import pytest
 from typing import TypedDict
 
-from config import DBSettings, RabbitMQSettings, TelegramSettings
+from config import (
+    DBSettings,
+    RabbitMQSettings,
+    TelegramSettings,
+    GoogleAPISettings,
+)
 
 
 class AuthSettings(TypedDict):
@@ -32,6 +37,13 @@ def telegram_settings():
     api_id = 123456
     api_hash = "abcdef1234567890"
     return TelegramAPISettings(api_id=api_id, api_hash=api_hash)
+
+
+@pytest.fixture
+def google_settings():
+    return {
+        "api_key": "fake_api_key",
+    }
 
 
 class TestRabbitMQSettings:
@@ -88,3 +100,9 @@ class TestTelegramSettings:
         )
         assert settings.api_id == telegram_settings["api_id"]
         assert settings.api_hash == telegram_settings["api_hash"]
+
+
+class TestAPIGoogleSettings:
+    def test_requires_api_credentials(self, google_settings):
+        settings = GoogleAPISettings(api_key=google_settings["api_key"])
+        assert settings.api_key == google_settings["api_key"]
