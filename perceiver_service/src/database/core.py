@@ -10,7 +10,9 @@ from sqlalchemy.ext.asyncio import (
 )
 from sqlalchemy.orm import DeclarativeBase
 
-from config import settings
+from config import get_settings
+
+settings = get_settings()
 
 
 def create_async_db_engine(connection_string: str, **kwargs) -> AsyncEngine:

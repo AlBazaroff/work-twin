@@ -11,14 +11,14 @@ from database.core import Base
 from database.models.dna import PersonalityDNA  # noqa: F401
 from database.models.knowledge import Knowledge, KnowledgeSpace  # noqa: F401
 from database.models.user import User, UserIntegration  # noqa: F401
-from config import settings
+from config import get_settings
 
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", settings.database.connection_url)
+config.set_main_option("sqlalchemy.url", get_settings.database.connection_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

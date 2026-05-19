@@ -3,10 +3,12 @@
 from celery import Celery
 from kombu import Queue
 
-from config import settings
+from config import get_settings
 
 high_queue = Queue("ingestion_high", durable=True)
 heavy_queue = Queue("ingestion_heavy", durable=True)
+
+settings = get_settings()
 
 app = Celery(
     "perceiver",

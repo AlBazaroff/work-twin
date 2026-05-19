@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from pydantic import Field, BaseModel, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -7,6 +9,12 @@ class TelegramSettings(BaseModel):
 
     api_id: int = Field(default=...)
     api_hash: str = Field(default=...)
+
+
+class GoogleAPISettings(BaseModel):
+    """Google API config"""
+
+    api_key: str = Field(default=...)
 
 
 class RabbitMQSettings(BaseModel):
@@ -63,8 +71,11 @@ class Settings(BaseSettings):
     rabbitmq: RabbitMQSettings = Field(default=...)
     database: DBSettings = Field(default=...)
     telegram: TelegramSettings = Field(default=...)
+    google: GoogleAPISettings = Field(default=...)
 
     secret_key: str = Field(default=...)
 
 
-settings = Settings()
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
