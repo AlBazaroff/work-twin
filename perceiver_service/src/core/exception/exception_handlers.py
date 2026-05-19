@@ -3,8 +3,8 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
-from core.exceptions.base import BaseException
-from core.exceptions.providers import (
+from core.exception.base import BaseException
+from core.exception.providers import (
     ProviderCredentialsNotFoundError,
     ProviderNotFoundError,
 )

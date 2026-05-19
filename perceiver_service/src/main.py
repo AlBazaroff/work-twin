@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from core.exceptions.exception_handlers import register_exception_handlers
+from core.exception.exception_handlers import register_exception_handlers
 from database.core import engine
 from middlewares import register_middlewares
 from router import router as api_router

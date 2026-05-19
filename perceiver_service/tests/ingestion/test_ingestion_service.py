@@ -39,7 +39,7 @@ class TestIngestionService:
         assert result is user
 
     @pytest.mark.asyncio
-    @patch("ingestion.services.ProviderFactory.get_provider")
+    @patch("ingestion.services.ProviderFactory.get_entity")
     async def test_pass_user_integration_data_creates_integration(
         self, mock_get_provider, mock_session, user_integration_payload
     ):
@@ -72,7 +72,7 @@ class TestIngestionService:
         assert integration.credentials == user_integration_payload.credentials
 
     @pytest.mark.asyncio
-    @patch("ingestion.services.ProviderFactory.get_provider")
+    @patch("ingestion.services.ProviderFactory.get_entity")
     async def test_propagates_provider_not_found(
         self, mock_get_provider, mock_session, user_integration_payload
     ):
@@ -80,7 +80,7 @@ class TestIngestionService:
         Test pass_user_integration_data propagates
         ProviderNotFoundError.
         """
-        from core.exceptions.providers import ProviderNotFoundError
+        from core.exception.providers import ProviderNotFoundError
 
         session, _user = mock_session
         mock_get_provider.side_effect = ProviderNotFoundError("slack")

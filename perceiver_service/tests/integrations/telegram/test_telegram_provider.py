@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 from config import settings
-from core.exceptions.providers import ProviderCredentialsNotFoundError
+from core.exception.providers import ProviderCredentialsNotFoundError
 from database.enums import Integration
 from integrations.telegram.providers import TelegramProvider
 from integrations.telegram.schemas import TelegramCredentials

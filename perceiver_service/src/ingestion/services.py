@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import insert
 from database.core import AsyncSession
 from database.enums import UserStatus
 from database.models.user import User, UserIntegration
-from core.providers.factory import ProviderFactory
+from core.factory.provider_factory import ProviderFactory
 from ingestion.schemas import (
     UserIntegrationTaskPayload,
     UserIntegrationResponse,
@@ -48,7 +48,7 @@ class IngestionService:
 
         user: User = await self._get_or_create_user(user_id, status)
 
-        provider = ProviderFactory.get_provider(integration)
+        provider = ProviderFactory.get_entity(integration)
         integration_user_id = await provider.get_identity(payload.credentials)
 
         new_integration = UserIntegration(

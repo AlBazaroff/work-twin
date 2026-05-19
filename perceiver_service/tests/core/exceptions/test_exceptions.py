@@ -2,8 +2,8 @@
 
 import pytest
 
-from core.exceptions.base import BaseException
-from core.exceptions.providers import (
+from core.exception.base import BaseException
+from core.exception.providers import (
     ProviderCredentialsNotFoundError,
     ProviderError,
     ProviderNotFoundError,
