@@ -9,6 +9,10 @@ class TelegramSettings(BaseModel):
 
     api_id: int = Field(default=...)
     api_hash: str = Field(default=...)
+    timeout: int = Field(default=25)
+    request_retries: int = Field(default=4)
+    connection_retries: int = Field(default=4)
+    retry_delay: int = Field(default=10)
 
 
 class GoogleAPISettings(BaseModel):

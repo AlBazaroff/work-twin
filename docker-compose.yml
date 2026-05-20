@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: perciever_service
     image: perceiver_work_twin:latest
-    command: []
+    command: ["fastapi", "dev", "main.py"]
     restart: always
     ports: 
       - "80:80"

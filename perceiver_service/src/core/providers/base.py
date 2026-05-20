@@ -1,6 +1,7 @@
 """Base factory and provider classes."""
 
 from abc import ABC, abstractmethod
+from uuid import UUID
 
 from database.enums import Integration
 from config import Settings
@@ -19,7 +20,7 @@ class BaseProvider(ABC):
         pass
 
     @abstractmethod
-    async def get_identity(self, credentials: BaseCredentials):
+    async def get_identity(self, user_id: UUID, credentials: BaseCredentials):
         """Return identity in the provider service.
 
         Args:
@@ -33,7 +34,12 @@ class SocialProvider(BaseProvider):
 
     @abstractmethod
     async def fetch_chat_history(
-        self, credentials: BaseCredentials, limit: int | None = None
+        self,
+        user_id: UUID,
+        credentials: BaseCredentials,
+        limit: int | None = None,
+        *args,
+        **kwargs,
     ):
         """Fetch chat history from provider service.
 
@@ -44,7 +50,9 @@ class SocialProvider(BaseProvider):
         pass
 
     @abstractmethod
-    async def analyze_profile(self, credentials: BaseCredentials):
+    async def analyze_profile(
+        self, user_id: UUID, credentials: BaseCredentials
+    ):
         """Analyze user profile in provider service.
 
         Args:
