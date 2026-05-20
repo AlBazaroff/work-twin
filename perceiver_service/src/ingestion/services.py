@@ -49,7 +49,9 @@ class IngestionService:
         user: User = await self._get_or_create_user(user_id, status)
 
         provider = ProviderFactory.get_entity(integration)
-        integration_user_id = await provider.get_identity(payload.credentials)
+        integration_user_id = await provider.get_identity(
+            user.id, payload.credentials
+        )
 
         new_integration = UserIntegration(
             integration=integration,

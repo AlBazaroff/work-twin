@@ -59,7 +59,8 @@ class TestIngestionService:
 
         mock_get_provider.assert_called_once_with(Integration.TELEGRAM)
         mock_provider.get_identity.assert_awaited_once_with(
-            user_integration_payload.credentials
+            user_integration_payload.user_id,
+            user_integration_payload.credentials,
         )
         session.execute.assert_awaited_once()
         session.commit.assert_awaited_once()

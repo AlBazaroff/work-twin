@@ -1,5 +1,6 @@
 """Tests for TelegramProvider identity and credentials handling."""
 
+import uuid
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -43,7 +44,7 @@ class TestTelegramProviderGetIdentity:
         """
         credentials = TelegramCredentials.model_construct(session_string="")
         with pytest.raises(ProviderCredentialsNotFoundError):
-            await provider.get_identity(credentials)
+            await provider.get_identity(uuid.uuid4(), credentials)
 
     @pytest.mark.asyncio
     @patch("integrations.telegram.providers.TelegramClient")
@@ -62,7 +63,7 @@ class TestTelegramProviderGetIdentity:
         mock_client.__aexit__ = AsyncMock(return_value=None)
         mock_client_cls.return_value = mock_client
         identity = await provider.get_identity(
-            TelegramCredentials(session_string="valid_session")
+            mock_me.id, TelegramCredentials(session_string="valid_session")
         )
 
         assert identity == "123456"
