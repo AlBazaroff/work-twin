@@ -11,7 +11,7 @@ from config import get_settings
 from database.core import Base
 from knowledge.models import Knowledge, KnowledgeSpace  # noqa: F401
 from user.models import User  # noqa: F401
-from twin.models import PersonalityDNA  # noqa: F401
+from personality_dna.models import PersonalityDNA  # noqa: F401
 
 settings = get_settings()
 # this is the Alembic Config object, which provides

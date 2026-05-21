@@ -1,6 +1,4 @@
-"""
-Contain models related to Personality DNA.
-"""
+"""Contain models related to Personality DNA."""
 
 from typing import Optional, TYPE_CHECKING
 
