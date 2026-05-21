@@ -13,7 +13,10 @@ from .schemas import PersonalityDNAResponse
 router = APIRouter(prefix="/twin", tags=["User"])
 
 
-@router.get("/personality_dna/{user_id}")
+@router.get(
+    "/personality_dna/{user_id}",
+    response_model=PersonalityDNAResponse,
+)
 async def personality_dna(
     db_session: DBSession,
     user_id: Annotated[

@@ -10,7 +10,7 @@ from database.mixins import IDMixin, TimeStampMixin
 from .enums import UserStatus
 
 if TYPE_CHECKING:
-    from twin.models import PersonalityDNA
+    from personality_dna.models import PersonalityDNA
     from integrations.models import UserIntegration
     from knowledge.models import KnowledgeSpace
 
