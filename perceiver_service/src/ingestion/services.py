@@ -4,13 +4,14 @@ from uuid import UUID
 from sqlalchemy.dialects.postgresql import insert
 
 from database.core import AsyncSession
-from database.enums import UserStatus
-from database.models.user import User, UserIntegration
+from user.models import User
 from core.factory.provider_factory import ProviderFactory
 from ingestion.schemas import (
     UserIntegrationTaskPayload,
     UserIntegrationResponse,
 )
+from integrations.models import UserIntegration
+from user.enums import UserStatus
 
 logger = logging.getLogger(__name__)
 

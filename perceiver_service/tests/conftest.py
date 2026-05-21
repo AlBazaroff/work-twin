@@ -6,6 +6,9 @@ import pytest
 from cryptography.fernet import Fernet
 from fastapi.testclient import TestClient
 
+import knowledge.models  # noqa: F401
+import user.models  # noqa: F401
+import twin.models  # noqa: F401
 from main import app
 
 # Settings and encrypted column types load at import time; set env first.

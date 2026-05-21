@@ -3,12 +3,12 @@ from celery.utils.log import get_task_logger
 from core.celery import app
 from core.decorators import async_task
 from database.core import get_db
-from database.enums import UserStatus
 from ingestion.schemas import (
     UserIntegrationTaskPayload,
     IntegrationDataAnalysisTaskPayload,
 )
 from ingestion.services import IngestionService
+from user.enums import UserStatus
 
 
 logger = get_task_logger(__name__)

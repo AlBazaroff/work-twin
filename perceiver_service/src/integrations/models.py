@@ -1,54 +1,19 @@
-"""Contain user and his related models."""
+"""Database integration models."""
 
 from datetime import datetime
 from typing import Optional, TYPE_CHECKING
 
 import uuid6
-from sqlalchemy import (
-    ForeignKey,
-    Enum,
-    String,
-    DateTime,
-    UniqueConstraint,
-)
+from sqlalchemy import ForeignKey, Enum, String, DateTime, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from database.core import Base
-from database.types import EncryptedJSON
 from database.mixins import IDMixin, TimeStampMixin
-from database.enums import UserStatus, Integration, IntegrationStatus
+from database.types import EncryptedJSON
+from .enums import Integration, IntegrationStatus
 
 if TYPE_CHECKING:
-    from .dna import PersonalityDNA
-    from .knowledge import KnowledgeSpace
-
-
-class User(Base, IDMixin, TimeStampMixin):
-    """
-    User model. Used for store main data about user
-    from third-party service for connectivity between them.
-    """
-
-    __tablename__ = "perceiver_user"
-
-    status: Mapped[UserStatus] = mapped_column(
-        Enum(UserStatus, native_enum=False),
-        default=UserStatus.UNPAID,
-        nullable=False,
-    )
-
-    integrations: Mapped[list["UserIntegration"]] = relationship(
-        back_populates="user",
-        cascade="all, delete-orphan",
-    )
-    personalities: Mapped[list["PersonalityDNA"]] = relationship(
-        back_populates="user",
-        cascade="all, delete-orphan",
-    )
-    knowledge_namespaces: Mapped[list["KnowledgeSpace"]] = relationship(
-        back_populates="user",
-        cascade="all, delete-orphan",
-    )
+    from user.models import User
 
 
 class UserIntegration(Base, IDMixin, TimeStampMixin):
@@ -83,7 +48,10 @@ class UserIntegration(Base, IDMixin, TimeStampMixin):
         DateTime(timezone=True),
     )
 
-    user: Mapped["User"] = relationship(back_populates="integrations")
+    user: Mapped["User"] = relationship(
+        "User",
+        back_populates="integrations",
+    )
 
     __table_args__ = (
         UniqueConstraint(

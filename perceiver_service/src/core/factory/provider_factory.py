@@ -3,7 +3,7 @@ from typing import Type
 from config import get_settings
 from core.providers.exceptions import ProviderNotFoundError
 from core.providers.base import BaseProvider
-from database.enums import Integration
+from integrations.enums import Integration
 from integrations.telegram.providers import TelegramProvider
 from .base import RegistryFactory
 

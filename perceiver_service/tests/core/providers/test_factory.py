@@ -7,7 +7,7 @@ import pytest
 from core.providers.base import BaseProvider
 from core.providers.exceptions import ProviderNotFoundError
 from core.factory.provider_factory import ProviderFactory
-from database.enums import Integration
+from integrations.enums import Integration
 from ingestion.schemas import BaseCredentials
 from integrations.telegram.providers import TelegramProvider
 

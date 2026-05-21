@@ -2,8 +2,10 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from database.enums import Integration, UserStatus
-from database.models.user import User, UserIntegration
+from integrations.enums import Integration
+from integrations.models import UserIntegration
+from user.enums import UserStatus
+from user.models import User
 
 
 class BaseCredentials(BaseModel):

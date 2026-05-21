@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from uuid6 import uuid7
 
-from database.enums import UserStatus
+from user.enums import UserStatus
 
 
 class TestIngestUserIntegrationDataTask:

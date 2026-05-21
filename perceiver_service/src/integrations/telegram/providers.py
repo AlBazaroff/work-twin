@@ -16,8 +16,8 @@ from telethon.errors import (
 from config import Settings
 from core.providers.exceptions import ProviderCredentialsNotFoundError
 from core.providers.base import SocialProvider
-from database.enums import Integration
 from core.exception import BaseException
+from integrations.enums import Integration
 from .exceptions import TelegramUserNotAuthorized
 from .schemas import TelegramCredentials, TelegramMessage
 

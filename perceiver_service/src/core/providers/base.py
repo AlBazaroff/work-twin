@@ -3,9 +3,9 @@
 from abc import ABC, abstractmethod
 from uuid import UUID
 
-from database.enums import Integration
 from config import Settings
 from ingestion.schemas import BaseCredentials
+from integrations.enums import Integration
 
 
 class BaseProvider(ABC):

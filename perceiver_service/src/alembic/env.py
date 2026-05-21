@@ -7,18 +7,18 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-from database.core import Base
-from database.models.dna import PersonalityDNA  # noqa: F401
-from database.models.knowledge import Knowledge, KnowledgeSpace  # noqa: F401
-from database.models.user import User, UserIntegration  # noqa: F401
 from config import get_settings
+from database.core import Base
+from knowledge.models import Knowledge, KnowledgeSpace  # noqa: F401
+from user.models import User  # noqa: F401
+from twin.models import PersonalityDNA  # noqa: F401
 
-
+settings = get_settings()
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
-config.set_main_option("sqlalchemy.url", get_settings.database.connection_url)
+config.set_main_option("sqlalchemy.url", settings.database.connection_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.

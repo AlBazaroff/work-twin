@@ -12,7 +12,7 @@ from database.types import EncryptedJSON
 from database.mixins import IDMixin, TimeStampMixin
 
 if TYPE_CHECKING:
-    from .user import User
+    from user.models import User
 
 
 class PersonalityDNA(Base, IDMixin, TimeStampMixin):
@@ -40,7 +40,7 @@ class PersonalityDNA(Base, IDMixin, TimeStampMixin):
         default=True,
     )
 
-    user: Mapped["User"] = relationship(back_populates="personalities")
+    user: Mapped["User"] = relationship("User", back_populates="personalities")
 
     __table_args__ = (
         UniqueConstraint(

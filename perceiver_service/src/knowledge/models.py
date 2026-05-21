@@ -20,10 +20,11 @@ from pgvector.sqlalchemy import VECTOR
 from database.core import Base
 from database.types import EncryptedJSON, EncryptedString
 from database.mixins import IDMixin, TimeStampMixin
-from database.enums import KnowledgeScope, KnowledgeSourceType, Integration
+from integrations.enums import Integration
+from .enums import KnowledgeScope, KnowledgeSourceType
 
 if TYPE_CHECKING:
-    from .user import User
+    from user.models import User
 
 
 class KnowledgeSpace(Base, IDMixin):
@@ -40,7 +41,9 @@ class KnowledgeSpace(Base, IDMixin):
     )
     extra_info: Mapped[Optional[dict]] = mapped_column(JSON)
 
-    user: Mapped["User"] = relationship(back_populates="knowledge_namespaces")
+    user: Mapped["User"] = relationship(
+        "User", back_populates="knowledge_namespaces"
+    )
     knowledge_items: Mapped["Knowledge"] = relationship(
         back_populates="knowledge_space",
         cascade="all, delete-orphan",

@@ -9,7 +9,7 @@ from telethon.errors import AuthKeyUnregisteredError
 
 from config import get_settings
 from core.providers.exceptions import ProviderCredentialsNotFoundError
-from database.enums import Integration
+from integrations.enums import Integration
 from integrations.telegram.exceptions import TelegramUserNotAuthorized
 from integrations.telegram.providers import TelegramProvider
 from integrations.telegram.schemas import TelegramCredentials, TelegramMessage
