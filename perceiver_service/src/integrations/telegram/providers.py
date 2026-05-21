@@ -97,6 +97,9 @@ class TelegramProvider(SocialProvider):
             )
             raise TelegramUserNotAuthorized(str(user_id))
 
+        except TelegramUserNotAuthorized as exc:
+            raise exc
+
         except BaseException as exc:
             logger.error(
                 f"[Telegram] Unexpected error while connecting "
