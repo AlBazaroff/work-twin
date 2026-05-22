@@ -1,17 +1,15 @@
 from uuid import UUID
+from typing import Union
 
 from pydantic import BaseModel, ConfigDict, Field
 
 from integrations.enums import Integration
 from integrations.models import UserIntegration
+from integrations.telegram.schemas import TelegramCredentials
 from user.enums import UserStatus
 from user.models import User
 
-
-class BaseCredentials(BaseModel):
-    """Base credentials for all providers."""
-
-    pass
+CredentialsUnion = Union[TelegramCredentials]
 
 
 class UserIntegrationTaskPayload(BaseModel):
@@ -26,7 +24,7 @@ class UserIntegrationTaskPayload(BaseModel):
     user_id: UUID
     integration: Integration
     status: UserStatus = Field(default=UserStatus.UNPAID)
-    credentials: BaseCredentials
+    credentials: CredentialsUnion = Field(..., discriminator="provider")
 
 
 class IntegrationDataAnalysisTaskPayload(BaseModel):

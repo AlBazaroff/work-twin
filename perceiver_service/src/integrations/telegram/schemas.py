@@ -1,15 +1,17 @@
 """Specific schemas for Telegram integration."""
 
 from datetime import datetime
+from typing import Literal
 
 from pydantic import Field, BaseModel
 
-from ingestion.schemas import BaseCredentials
+from integrations.schemas import BaseCredentials
 
 
 class TelegramCredentials(BaseCredentials):
     """Credentials for Telegram Provider."""
 
+    provider: Literal["telegram"] = Field(default="telegram")
     session_string: str = Field(..., min_length=1)
 
 

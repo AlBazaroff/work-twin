@@ -17,16 +17,16 @@ class BaseUser(BaseModel):
 class DefaultFieldsMixin(BaseModel):
     """Default fields for User."""
 
-    status: UserStatus | None = Field(None)
+    status: UserStatus | None = Field(default=None)
 
 
-class UserCreate(BaseUser, DefaultFieldsMixin):
+class UserCreate(DefaultFieldsMixin, BaseUser):
     """Schema for creating User."""
 
     pass
 
 
-class UserUpdate(BaseUser, DefaultFieldsMixin):
+class UserUpdate(DefaultFieldsMixin, BaseUser):
     """Schema for updating User."""
 
     pass

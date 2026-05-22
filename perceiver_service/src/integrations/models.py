@@ -59,4 +59,9 @@ class UserIntegration(Base, IDMixin, TimeStampMixin):
             "integration",
             name="uq_integration_uid_integration",
         ),
+        UniqueConstraint(
+            "user_id",
+            "integration",
+            name="uq_user_id_integration",
+        ),
     )
