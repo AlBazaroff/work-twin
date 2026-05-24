@@ -21,6 +21,7 @@ dependencies = [
     "langchain-postgres>=0.0.17",
     "langchain-text-splitters>=1.1.2",
     "langgraph>=1.1.9",
+    "mypy>=2.1.0",
     "pgvector>=0.3.6",
     "pre-commit>=4.6.0",
     "pydantic>=2.13.3",

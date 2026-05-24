@@ -22,7 +22,7 @@ WorkTwin is a "Digital Twin" system that mimics your professional persona. It do
 
 It's a microservice via **RabbitMQ** (Signals) and endpoint on **FastAPI**.
 
-1. 📥 **Perceiver Service (The Student)**
+📥 **Perceiver Service (The Student)**
 * Role: Scans historical data, extracts "Style Markers," and populates the brain.
 * Tech: Python, Celery, Redis, SQLAlchemy, FastAPI.
 * Core Logic: 
