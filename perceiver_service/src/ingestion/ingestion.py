@@ -1,17 +1,16 @@
 import logging
-from uuid import UUID
 
-from sqlalchemy.dialects.postgresql import insert
-
-from database.core import AsyncSession
-from user.models import User
 from core.factory.provider_factory import ProviderFactory
+from database.core import AsyncSession
 from ingestion.schemas import (
-    UserIntegrationTaskPayload,
     UserIntegrationResponse,
+    UserIntegrationTaskPayload,
 )
-from integrations.models import UserIntegration
-from user.enums import UserStatus
+from integrations.schemas import UserIntegrationCreate
+from integrations.service import (
+    create_or_update as create_or_update_integration,
+)
+from user.service import get as get_user
 
 logger = logging.getLogger(__name__)
 
@@ -22,46 +21,35 @@ class IngestionService:
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def _get_or_create_user(
-        self, user_id: UUID, status: UserStatus
-    ) -> User:
-        stmt = (
-            insert(User)
-            .values(id=user_id, status=status)
-            .on_conflict_do_update(
-                index_elements=["id"],
-                set_=dict(status=status),
-                where=(User.status != status),
-            )
-            .returning(User)
-        )
-        result = await self.session.execute(stmt)
-        user = result.scalar_one()
-        return user
-
     async def pass_user_integration_data(
         self, payload: UserIntegrationTaskPayload
     ) -> UserIntegrationResponse:
         """Pass user integration data from payload."""
         user_id = payload.user_id
         integration = payload.integration
-        status = payload.status
 
-        user: User = await self._get_or_create_user(user_id, status)
+        user = await get_user(db_session=self.session, user_id=user_id)
+        if not user:
+            # TODO: raise UserNotExist
+            raise Exception
 
         provider = ProviderFactory.get_entity(integration)
         integration_user_id = await provider.get_identity(
             user.id, payload.credentials
         )
+        # TODO USE UPDATED_AT
 
-        new_integration = UserIntegration(
+        integration = UserIntegrationCreate(
+            user_id=user_id,
             integration=integration,
-            credentials=payload.credentials,
             integration_user_id=integration_user_id,
+            credentials=payload.credentials.model_dump(exclude_unset=True),
         )
-        user.integrations.append(new_integration)
+        new_integration = create_or_update_integration(
+            db_session=self.session,
+            integration_in=integration,
+        )
 
-        await self.session.commit()
         logger.info(
             f"Added new integration: {integration} for user: {user_id}"
         )

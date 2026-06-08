@@ -9,9 +9,10 @@ from alembic import context
 
 from config import get_settings
 from database.core import Base
+from integrations.models import UserIntegration  # noqa: F401
 from knowledge.models import Knowledge, KnowledgeSpace  # noqa: F401
-from user.models import User  # noqa: F401
 from personality_dna.models import PersonalityDNA  # noqa: F401
+from user.models import User  # noqa: F401
 
 settings = get_settings()
 # this is the Alembic Config object, which provides

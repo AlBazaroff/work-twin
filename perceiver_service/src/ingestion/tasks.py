@@ -2,12 +2,12 @@ from celery.utils.log import get_task_logger
 
 from core.celery import app
 from core.decorators import async_task
-from database.core import get_db
+from database.core import AsyncSessionLocal
 from ingestion.schemas import (
     UserIntegrationTaskPayload,
     IntegrationDataAnalysisTaskPayload,
 )
-from ingestion.services import IngestionService
+from ingestion.ingestion import IngestionService
 from user.enums import UserStatus
 
 
@@ -28,7 +28,7 @@ async def ingest_user_integration_data(payload):
     third party service.
     """
     payload = UserIntegrationTaskPayload.model_validate_json(payload)
-    async with get_db() as session:
+    async with AsyncSessionLocal() as session:
         service = IngestionService(session)
         response = await service.pass_user_integration_data(payload)
 
