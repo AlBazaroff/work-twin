@@ -3,6 +3,7 @@
 from uuid import UUID
 
 from sqlalchemy import select, insert, update as q_update, delete as q_delete
+from sqlalchemy.dialects.postgresql import insert as psql_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import UserIntegration
@@ -26,6 +27,30 @@ async def create(
     stmt = (
         insert(UserIntegration)
         .values(**integration_in.model_dump())
+        .returning(UserIntegration)
+    )
+    user_integration = await db_session.scalar(stmt)
+    await db_session.commit()
+
+    return user_integration
+
+
+async def create_or_update(
+    *, db_session: AsyncSession, integration_in: UserIntegrationCreate
+) -> UserIntegration | None:
+    """
+    Create or update new UserIntegration based on integration_in data.
+    """
+    data = integration_in.model_dump()
+    user_id = data.pop("user_id")
+    integration = data.pop("integration")
+    stmt = (
+        psql_insert(UserIntegration)
+        .values(user_id=user_id, integration=integration**data)
+        .on_conflict_do_update(
+            index_elements=["user_id", "integration"],
+            set_=dict(**data),
+        )
         .returning(UserIntegration)
     )
     user_integration = await db_session.scalar(stmt)

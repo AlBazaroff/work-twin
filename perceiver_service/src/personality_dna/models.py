@@ -1,6 +1,7 @@
 """Contain models related to Personality DNA."""
 
 from typing import Optional, TYPE_CHECKING
+from uuid import UUID
 
 from sqlalchemy import ForeignKey, Integer, Boolean, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -22,7 +23,7 @@ class PersonalityDNA(Base, IDMixin, TimeStampMixin):
 
     __tablename__ = "personality_dna"
 
-    user_id: Mapped[int] = mapped_column(
+    user_id: Mapped[UUID] = mapped_column(
         ForeignKey("perceiver_user.id"),
         index=True,
         nullable=False,

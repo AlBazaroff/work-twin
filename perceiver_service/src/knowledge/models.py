@@ -3,6 +3,7 @@ Contain database related models with knowledge.
 """
 
 from typing import Optional, TYPE_CHECKING
+from uuid import UUID
 
 from sqlalchemy import (
     ForeignKey,
@@ -30,7 +31,7 @@ if TYPE_CHECKING:
 class KnowledgeSpace(Base, IDMixin):
     __tablename__ = "knowledge_space"
 
-    user_id: Mapped[int] = mapped_column(
+    user_id: Mapped[UUID] = mapped_column(
         ForeignKey("perceiver_user.id"),
         index=True,
         nullable=False,
@@ -61,7 +62,7 @@ class KnowledgeSpace(Base, IDMixin):
 class Knowledge(Base, IDMixin, TimeStampMixin):
     __tablename__ = "knowledge"
 
-    knowledge_space_id: Mapped[int] = mapped_column(
+    knowledge_space_id: Mapped[UUID] = mapped_column(
         ForeignKey("knowledge_space.id"),
         index=True,
     )
