@@ -9,7 +9,7 @@ from user.enums import UserStatus
 
 class TestIngestUserIntegrationDataTask:
     @patch("ingestion.tasks.analyze_user_integration_data")
-    @patch("ingestion.tasks.get_db")
+    @patch("ingestion.tasks.AsyncSessionLocal")
     @patch("ingestion.tasks.IngestionService")
     def test_schedules_analysis_for_paid_user(
         self,
@@ -52,7 +52,7 @@ class TestIngestUserIntegrationDataTask:
         assert str(integration_id) in delay_arg
 
     @patch("ingestion.tasks.analyze_user_integration_data")
-    @patch("ingestion.tasks.get_db")
+    @patch("ingestion.tasks.AsyncSessionLocal")
     @patch("ingestion.tasks.IngestionService")
     def test_skips_analysis_for_unpaid_user(
         self,

@@ -45,7 +45,7 @@ class IngestionService:
             integration_user_id=integration_user_id,
             credentials=payload.credentials.model_dump(exclude_unset=True),
         )
-        new_integration = create_or_update_integration(
+        new_integration = await create_or_update_integration(
             db_session=self.session,
             integration_in=integration,
         )

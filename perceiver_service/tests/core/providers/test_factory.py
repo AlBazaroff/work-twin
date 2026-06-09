@@ -8,7 +8,7 @@ from core.providers.base import BaseProvider
 from core.providers.exceptions import ProviderNotFoundError
 from core.factory.provider_factory import ProviderFactory
 from integrations.enums import Integration
-from ingestion.schemas import BaseCredentials
+from integrations.schemas import BaseCredentials
 from integrations.telegram.providers import TelegramProvider
 
 

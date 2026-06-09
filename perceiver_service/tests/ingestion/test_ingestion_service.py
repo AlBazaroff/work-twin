@@ -6,7 +6,8 @@ import pytest
 
 from user.models import User
 from integrations.enums import Integration
-from ingestion.services import IngestionService
+from integrations.models import UserIntegration
+from ingestion.ingestion import IngestionService
 from user.enums import UserStatus
 
 
@@ -24,34 +25,42 @@ def mock_session(user_id):
 
 class TestIngestionService:
     @pytest.mark.asyncio
-    async def test_get_or_create_user_executes_upsert(self, mock_session):
-        """
-        Test that get_or_create_user executes upsert
-        and returns user.
-        """
-        session, user = mock_session
-        service = IngestionService(session)
-
-        result = await service._get_or_create_user(
-            user.id, UserStatus.DEACTIVATED
-        )
-
-        session.execute.assert_awaited_once()
-        assert result is user
-
-    @pytest.mark.asyncio
-    @patch("ingestion.services.ProviderFactory.get_entity")
+    @patch("ingestion.ingestion.create_or_update_integration")
+    @patch("ingestion.ingestion.ProviderFactory.get_entity")
+    @patch("ingestion.ingestion.get_user")
     async def test_pass_user_integration_data_creates_integration(
-        self, mock_get_provider, mock_session, user_integration_payload
+        self,
+        mock_get_user,
+        mock_get_provider,
+        mock_create_or_update,
+        mock_session,
+        user_integration_payload,
     ):
         """
         Test that pass_user_integration_data creates a new integration
         and commits the session.
         """
         session, user = mock_session
+        # integration = UserIntegration
         mock_provider = AsyncMock()
         mock_provider.get_identity = AsyncMock(return_value="12345")
         mock_get_provider.return_value = mock_provider
+        mock_get_user.return_value = user
+
+        async def fake_create_or_update(*, db_session, integration_in):
+            await db_session.commit()
+            integration = UserIntegration(
+                user_id=user_integration_payload.user_id,
+                integration=user_integration_payload.integration,
+                integration_user_id="12345",
+                credentials=user_integration_payload.credentials.model_dump(
+                    exclude_unset=True
+                ),
+            )
+            user.integrations.append(integration)
+            return integration
+
+        mock_create_or_update.side_effect = fake_create_or_update
 
         service = IngestionService(session)
         response = await service.pass_user_integration_data(
@@ -63,7 +72,6 @@ class TestIngestionService:
             user_integration_payload.user_id,
             user_integration_payload.credentials,
         )
-        session.execute.assert_awaited_once()
         session.commit.assert_awaited_once()
 
         assert response.user is user
@@ -71,10 +79,15 @@ class TestIngestionService:
         integration = response.integration
         assert integration.integration == Integration.TELEGRAM
         assert integration.integration_user_id == "12345"
-        assert integration.credentials == user_integration_payload.credentials
+        assert (
+            integration.credentials
+            == user_integration_payload.credentials.model_dump(
+                exclude_unset=True
+            )
+        )
 
     @pytest.mark.asyncio
-    @patch("ingestion.services.ProviderFactory.get_entity")
+    @patch("ingestion.ingestion.ProviderFactory.get_entity")
     async def test_propagates_provider_not_found(
         self, mock_get_provider, mock_session, user_integration_payload
     ):

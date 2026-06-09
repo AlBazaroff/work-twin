@@ -32,6 +32,7 @@ class TestPersonalityDNAResponse:
             "style_markers": active_personality_dna["style_markers"],
             "core_facts": active_personality_dna["core_facts"],
             "preferences": active_personality_dna["preferences"],
+            "version": 1,
         }
 
     def test_failed_without_attributes(self):

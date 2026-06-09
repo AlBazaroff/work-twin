@@ -42,11 +42,9 @@ async def create_or_update(
     Create or update new UserIntegration based on integration_in data.
     """
     data = integration_in.model_dump()
-    user_id = data.pop("user_id")
-    integration = data.pop("integration")
     stmt = (
         psql_insert(UserIntegration)
-        .values(user_id=user_id, integration=integration**data)
+        .values(**data)
         .on_conflict_do_update(
             index_elements=["user_id", "integration"],
             set_=dict(**data),
