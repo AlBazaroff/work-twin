@@ -4,7 +4,15 @@ import pytest
 from uuid6 import uuid7
 
 from personality_dna.models import PersonalityDNA
-from personality_dna.service import get, get_active_by_user_id
+from personality_dna.service import (
+    get,
+    get_active_by_user_id,
+    create,
+    update,
+    delete,
+)
+from personality_dna.schemas import PersonalityDNACreate, PersonalityDNAUpdate
+from user.models import User
 
 
 @pytest.mark.asyncio
@@ -83,3 +91,58 @@ class TestPersonalityDNACRUD:
         )
 
         assert result is None
+
+    async def test_create_record(self, db_session):
+        """Test creating a new personality record."""
+        user = User()
+        db_session.add(user)
+        await db_session.commit()
+        await db_session.refresh(user)
+
+        personality_in = PersonalityDNACreate(
+            user_id=user.id,
+            style_markers={"style": "cool"},
+            version=1,
+        )
+        result = await create(
+            db_session=db_session, personality_in=personality_in
+        )
+
+        assert result is not None
+        assert result.user_id == user.id
+        assert result.style_markers == {"style": "cool"}
+        assert result.version == 1
+
+    async def test_update_record(self, db_session, active_personality_dna):
+        """Test updating an existing record."""
+        dna = PersonalityDNA(**active_personality_dna)
+        db_session.add(dna)
+        await db_session.commit()
+        await db_session.refresh(dna)
+
+        personality_in = PersonalityDNAUpdate(
+            id=dna.id,
+            style_markers={"style": "new-style"},
+        )
+        result = await update(
+            db_session=db_session, personality_in=personality_in
+        )
+
+        assert result is not None
+        assert result.style_markers == {"style": "new-style"}
+        assert result.version == active_personality_dna["version"]
+
+    async def test_delete_record(self, db_session, active_personality_dna):
+        """Test deleting a record."""
+        dna = PersonalityDNA(**active_personality_dna)
+        db_session.add(dna)
+        await db_session.commit()
+
+        result = await delete(db_session=db_session, personality_id=dna.id)
+
+        assert result is not None
+        assert result.id == dna.id
+
+        # Verify it's gone
+        check = await get(db_session=db_session, personality_id=dna.id)
+        assert check is None
