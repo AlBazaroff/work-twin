@@ -7,12 +7,15 @@ from pydantic import ValidationError
 from uuid6 import uuid7
 
 from integrations.enums import Integration
-from ingestion.schemas import (
+from src.ingestion.schemas import (
     IntegrationDataAnalysisTaskPayload,
     UserIntegrationTaskPayload,
+    UserIntegrationResponse,
 )
 from integrations.telegram.schemas import TelegramCredentials
 from user.enums import UserStatus
+from user.models import User
+from integrations.models import UserIntegration
 
 
 @pytest.fixture
@@ -79,3 +82,26 @@ class TestIntegrationDataAnalysisTaskPayload:
         raw = json.dumps({"integration_id": str(integration_id)})
         payload = IntegrationDataAnalysisTaskPayload.model_validate_json(raw)
         assert payload.integration_id == integration_id
+
+
+class TestUserIntegrationResponse:
+    def test_requires_user_and_integration(
+        self, uuid, valid_user_integration_data
+    ):
+        """
+        Test checks requiring User and UserIntegration models
+        and ability to process them.
+        """
+        user = User(id=valid_user_integration_data["user_id"])
+        integration = UserIntegration(
+            user_id=valid_user_integration_data["user_id"],
+            integration=valid_user_integration_data["integration"],
+            credentials=valid_user_integration_data["credentials"],
+        )
+        response = UserIntegrationResponse(user=user, integration=integration)
+
+        assert response.user == user
+        assert response.user.id == user.id
+        assert response.integration == integration
+        assert response.integration.id == integration.id
+        assert response.integration.user_id == integration.user_id
