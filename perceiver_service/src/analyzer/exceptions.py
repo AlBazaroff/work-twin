@@ -1,6 +1,6 @@
 """Exceptions related with embeddings."""
 
-from core.exception.factory import EntityNotFoundError
+from core.factory.exceptions import EntityNotFoundError
 
 
 class EmbeddingNotFoundError(EntityNotFoundError):

@@ -1,7 +1,7 @@
 """Exceptions for working with providers."""
 
 from core.exception.base import BaseException
-from core.exception.factory import EntityNotFoundError
+from core.factory.exceptions import EntityNotFoundError
 
 
 class ProviderNotFoundError(EntityNotFoundError):

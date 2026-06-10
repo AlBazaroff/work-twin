@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from core.const.errors.base import INTERNAL_ERROR_MESSAGE
-from middlewares.logging import (
+from middleware.logging import (
     CorrelationIdMiddleware,
     EnhancedLoggingMiddleware,
 )

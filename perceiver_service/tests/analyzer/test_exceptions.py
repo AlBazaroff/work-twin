@@ -3,7 +3,7 @@
 import pytest
 
 from analyzer.exceptions import EmbeddingNotFoundError
-from core.exception.factory import EntityNotFoundError
+from core.factory.exceptions import EntityNotFoundError
 
 
 @pytest.fixture

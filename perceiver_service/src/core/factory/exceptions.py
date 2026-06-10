@@ -1,6 +1,6 @@
 """Exceptions for basic factory errors."""
 
-from .base import BaseException
+from core.exception.base import BaseException
 
 
 class EntityError(BaseException):
