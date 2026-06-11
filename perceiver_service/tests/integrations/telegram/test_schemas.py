@@ -4,7 +4,7 @@ import pytest
 from pydantic import ValidationError
 
 from integrations.enums import Integration
-from integrations.telegram.schemas import TelegramCredentials
+from integrations.telegram.schemas import TelegramCredentials, TelegramMessage
 
 
 @pytest.fixture
@@ -45,3 +45,23 @@ class TestTelegramCredentials:
         """
         with pytest.raises(ValidationError):
             TelegramCredentials()  # type: ignore
+
+
+class TestTelegramMessage:
+    def test_validation_success(self):
+        """Test successful instantiation with valid data."""
+        data = {
+            "message_id": 1,
+            "text": "Hello",
+            "date": "2026-06-11T12:00:00",
+            "me": True,
+            "reply_to": 0,
+        }
+        message = TelegramMessage(**data)
+        assert message.message_id == 1
+        assert message.text == "Hello"
+
+    def test_validation_failure(self):
+        """Test validation failure with missing necessary fields."""
+        with pytest.raises(ValidationError):
+            TelegramMessage(message_id=1, text="Hello")

@@ -2,8 +2,15 @@
 
 import pytest
 from pydantic import ValidationError
+from uuid6 import uuid7
 
-from personality_dna.schemas import BasePersonalityDNA, PersonalityDNAResponse
+from personality_dna.schemas import (
+    BasePersonalityDNA,
+    PersonalityDNAResponse,
+    PersonalityDNACreate,
+    PersonalityDNAUpdate,
+    ActivePersonalityDNAUpdate,
+)
 
 
 class TestBasePersonalityDNA:
@@ -54,3 +61,87 @@ class TestPersonalityDNAResponse:
 
         assert result.core_facts is None
         assert result.preferences is None
+
+
+class TestPersonalityDNACreate:
+    """Test PersonalityDNACreate schema."""
+
+    def test_validation_success(self, active_personality_dna):
+        """Test successful validation."""
+        result = PersonalityDNACreate.model_validate(active_personality_dna)
+        assert result.user_id == active_personality_dna["user_id"]
+        assert result.is_active is True
+
+    def test_validation_failure(self):
+        """Test failure without required fields."""
+        with pytest.raises(ValidationError):
+            PersonalityDNACreate(version=1)
+
+    def test_default_values_with_minimal_data(self):
+        """Test that default values are set correctly."""
+        version = 1
+        user_id = uuid7()
+        data = {
+            "user_id": user_id,
+            "version": version,
+        }
+        result = PersonalityDNACreate(**data)
+
+        assert result.user_id == user_id
+        assert result.version == version
+        assert result.is_active is True
+
+
+class TestPersonalityDNAUpdate:
+    """Test PersonalityDNAUpdate schema."""
+
+    def test_validation_success(self, active_personality_dna):
+        """Test successful validation."""
+        data = {"id": active_personality_dna["id"], "is_active": False}
+        result = PersonalityDNAUpdate.model_validate(data)
+        assert result.id == active_personality_dna["id"]
+        assert result.is_active is False
+
+    def test_validation_failure(self):
+        """Test failure without required fields."""
+        with pytest.raises(ValidationError):
+            PersonalityDNAUpdate()
+
+    def test_default_values_with_minimal_data(self):
+        """Test that default values are set correctly."""
+        p_id = uuid7()
+        data = {
+            "id": p_id,
+        }
+        result = PersonalityDNAUpdate(**data)
+
+        assert result.id == p_id
+
+
+class TestActivePersonalityDNAUpdate:
+    """Test ActivePersonalityDNAUpdate schema."""
+
+    def test_validation_success(self, active_personality_dna):
+        """Test successful validation."""
+        data = {
+            "user_id": active_personality_dna["user_id"],
+            "is_active": False,
+        }
+        result = ActivePersonalityDNAUpdate.model_validate(data)
+        assert result.user_id == active_personality_dna["user_id"]
+        assert result.is_active is False
+
+    def test_validation_failure(self):
+        """Test failure without required fields."""
+        with pytest.raises(ValidationError):
+            ActivePersonalityDNAUpdate()
+
+    def test_default_values_with_minimal_data(self):
+        """Test that default values are set correctly."""
+        user_id = uuid7()
+        data = {
+            "user_id": user_id,
+        }
+        result = ActivePersonalityDNAUpdate(**data)
+
+        assert result.user_id == user_id
