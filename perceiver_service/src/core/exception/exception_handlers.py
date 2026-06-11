@@ -33,3 +33,5 @@ def register_exception_handlers(app: FastAPI) -> None:
             status_code=400,
             content={"detail": exc.message},
         )
+
+    # TODO: Add handler for unexpected exceptions (500)
