@@ -9,15 +9,36 @@ from personality_dna.service import (
     get_active_by_user_id,
     create,
     update,
+    update_active_by_user_id,
     delete,
 )
-from personality_dna.schemas import PersonalityDNACreate, PersonalityDNAUpdate
+from personality_dna.schemas import (
+    PersonalityDNACreate,
+    PersonalityDNAUpdate,
+    ActivePersonalityDNAUpdate,
+)
 from user.models import User
 
 
 @pytest.mark.asyncio
 class TestPersonalityDNACRUD:
     """Test PersonalityDNA CRUDs."""
+
+    async def _create_personality(
+        self, db_session, personality_dna
+    ) -> PersonalityDNA:
+        """Create PersonalityDNA in DB.
+
+        Args:
+            personality_dna - personality dna info
+            db_session - database session for creating
+        """
+        dna = PersonalityDNA(**personality_dna)
+        db_session.add(dna)
+        await db_session.commit()
+        await db_session.refresh(dna)
+
+        return dna
 
     async def test_get_existing_record(
         self, db_session, active_personality_dna
@@ -115,21 +136,44 @@ class TestPersonalityDNACRUD:
 
     async def test_update_record(self, db_session, active_personality_dna):
         """Test updating an existing record."""
-        dna = PersonalityDNA(**active_personality_dna)
-        db_session.add(dna)
-        await db_session.commit()
-        await db_session.refresh(dna)
+        dna = await self._create_personality(
+            db_session, active_personality_dna
+        )
 
+        style_markers = {"style": "new-style"}
         personality_in = PersonalityDNAUpdate(
             id=dna.id,
-            style_markers={"style": "new-style"},
+            style_markers=style_markers,
         )
         result = await update(
             db_session=db_session, personality_in=personality_in
         )
 
         assert result is not None
-        assert result.style_markers == {"style": "new-style"}
+        assert result.style_markers == style_markers
+        assert result.version == active_personality_dna["version"]
+
+    async def test_update_active_by_user_id(
+        self,
+        db_session,
+        active_personality_dna,
+    ):
+        dna = await self._create_personality(
+            db_session, active_personality_dna
+        )
+
+        core_facts = {"fact": "refresh_facts"}
+
+        personality_in = ActivePersonalityDNAUpdate(
+            user_id=dna.user_id,
+            core_facts=core_facts,
+        )
+        result = await update_active_by_user_id(
+            db_session=db_session, personality_in=personality_in
+        )
+
+        assert result is not None
+        assert result.core_facts == core_facts
         assert result.version == active_personality_dna["version"]
 
     async def test_delete_record(self, db_session, active_personality_dna):

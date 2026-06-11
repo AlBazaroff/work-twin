@@ -71,10 +71,9 @@ async def update(
 async def update_active_by_user_id(
     *,
     db_session: AsyncSession,
-    user_id: UUID,
     personality_in: ActivePersonalityDNAUpdate,
 ) -> PersonalityDNA | None:
-    """Update active personality DNA for user."""
+    """Update active personality DNA for user by user_id."""
     personality_data = personality_in.model_dump(exclude_unset=True)
     user_id = personality_data.pop("user_id")
 
