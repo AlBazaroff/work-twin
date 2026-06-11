@@ -39,6 +39,7 @@ class UserIntegrationCreate(BaseUserIntegration, DefaultFieldsMixin):
 class UserIntegrationUpdate(BaseUserIntegration, DefaultFieldsMixin):
     """Schema for update UserIntegration."""
 
+    id: UUID
     integration: Integration | None = Field(None)
     credentials: dict | None = Field(None)
     status: IntegrationStatus | None = Field(None)

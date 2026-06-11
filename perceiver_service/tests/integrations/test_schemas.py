@@ -40,6 +40,7 @@ def valid_user_integration_create_data(user_id: UUID) -> dict:
 def valid_user_integration_update_data(user_id: UUID) -> dict:
     """Returns valid data for UserIntegrationUpdate schema."""
     return {
+        "id": uuid7(),
         "user_id": user_id,
         "integration": Integration.SLACK,
         "credentials": {"token": "xoxb-some-token"},
@@ -143,9 +144,12 @@ class TestUserIntegrationUpdate:
         )
         assert schema.status == valid_user_integration_update_data["status"]
 
-    def test_update_partial_success(self, user_id: UUID) -> None:
+    def test_update_partial_success(
+        self, user_id: UUID, valid_user_integration_update_data: dict
+    ) -> None:
         """Test successful update with only a subset of optional fields."""
         minimal_update_data = {
+            "id": valid_user_integration_update_data["id"],
             "user_id": user_id,
             "integration": Integration.SLACK,
         }
@@ -158,6 +162,7 @@ class TestUserIntegrationUpdate:
 
         # Test with just credentials
         credentials_only_data = {
+            "id": valid_user_integration_update_data["id"],
             "user_id": user_id,
             "credentials": {"token": "another-token"},
         }
