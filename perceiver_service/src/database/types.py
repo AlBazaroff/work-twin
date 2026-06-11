@@ -15,6 +15,7 @@ class EncryptedString(TypeDecorator):
     """Encrypt string when recording, decrypt when extracting."""
 
     impl = String
+    cache_ok = True
 
     def process_bind_param(self, value: Any | None, dialect: Dialect) -> Any:
         if value is not None:
@@ -35,6 +36,7 @@ class EncryptedJSON(TypeDecorator):
     """Encrypt JSON when recording, decrypt when extracting."""
 
     impl = String
+    cache_ok = True
 
     def process_bind_param(self, value: Any | None, dialect: Dialect) -> Any:
         if value is not None:

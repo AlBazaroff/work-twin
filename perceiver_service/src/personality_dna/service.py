@@ -6,7 +6,11 @@ from sqlalchemy import select, insert, update as q_update, delete as q_delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import PersonalityDNA
-from .schemas import PersonalityDNACreate, PersonalityDNAUpdate
+from .schemas import (
+    PersonalityDNACreate,
+    PersonalityDNAUpdate,
+    ActivePersonalityDNAUpdate,
+)
 
 
 async def get(
@@ -56,6 +60,34 @@ async def update(
         .where(PersonalityDNA.id == personality_id)
         .returning(PersonalityDNA)
     )
+    personality = await db_session.scalar(stmt)
+
+    if personality:
+        await db_session.commit()
+
+    return personality
+
+
+async def update_active_by_user_id(
+    *,
+    db_session: AsyncSession,
+    user_id: UUID,
+    personality_in: ActivePersonalityDNAUpdate,
+) -> PersonalityDNA | None:
+    """Update active personality DNA for user."""
+    personality_data = personality_in.model_dump(exclude_unset=True)
+    user_id = personality_data.pop("user_id")
+
+    stmt = (
+        q_update(PersonalityDNA)
+        .values(**personality_data)
+        .where(
+            PersonalityDNA.user_id == user_id,
+            PersonalityDNA.is_active.is_(True),
+        )
+        .returning(PersonalityDNA)
+    )
+
     personality = await db_session.scalar(stmt)
 
     if personality:

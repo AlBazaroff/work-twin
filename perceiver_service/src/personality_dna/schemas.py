@@ -33,11 +33,22 @@ class PersonalityDNACreate(BasePersonalityDNA):
     is_active: bool = True
 
 
-class PersonalityDNAUpdate(BaseModel):
-    """Schema for updating Personality DNA."""
+class BasePersonalityDNAUpdate(BaseModel):
+    """Base schema for updating Personality DNA."""
 
-    id: UUID
     style_markers: Optional[dict] = Field(default=None)
     core_facts: Optional[dict] = Field(default=None)
     preferences: Optional[dict] = Field(default=None)
     is_active: Optional[bool] = Field(default=None)
+
+
+class PersonalityDNAUpdate(BasePersonalityDNAUpdate):
+    """Schema for updating Personality DNA."""
+
+    id: UUID
+
+
+class ActivePersonalityDNAUpdate(BasePersonalityDNAUpdate):
+    """Schema for updating active Personality DNA by user ID."""
+
+    user_id: UUID
