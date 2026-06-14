@@ -11,6 +11,7 @@ from sqlalchemy.pool import StaticPool
 import knowledge.models  # noqa: F401
 import user.models  # noqa: F401
 import personality_dna.models  # noqa: F401
+import integrations.models  # noqa: F401
 from database.core import Base, create_async_db_engine
 from main import app
 
