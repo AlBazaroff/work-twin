@@ -4,7 +4,7 @@ import pytest
 from uuid6 import uuid7
 
 from user.models import User
-from user.service import get, create, update, delete
+from user.service import get, create, update, delete, get_or_create
 from user.schemas import UserCreate, UserUpdate
 from user.enums import UserStatus
 
@@ -79,3 +79,23 @@ class TestUserCRUD:
 
         check = await get(db_session=db_session, user_id=user.id)
         assert check is None
+
+    async def test_get_or_create_new_user(self, db_session):
+        """Test get_or_create for a new user."""
+        user_id = uuid7()
+
+        result = await get_or_create(db_session=db_session, user_id=user_id)
+
+        assert result is not None
+        assert result.id == user_id
+        assert result.status == UserStatus.UNPAID
+
+    async def test_get_or_create_existing_user(self, db_session):
+        """Test get_or_create for an existing user."""
+        user = await self._create_user(db_session, status=UserStatus.PAID)
+
+        result = await get_or_create(db_session=db_session, user_id=user.id)
+
+        assert result is not None
+        assert result.id == user.id
+        assert result.status == UserStatus.PAID

@@ -13,7 +13,6 @@ from src.ingestion.schemas import (
     UserIntegrationResponse,
 )
 from integrations.telegram.schemas import TelegramCredentials
-from user.enums import UserStatus
 from user.models import User
 from integrations.models import UserIntegration
 
@@ -36,17 +35,6 @@ def valid_user_integration_data(uuid, valid_tg_session_string):
 
 
 class TestUserIntegrationTaskPayload:
-    def test_defaults_status_to_unpaid(self, valid_user_integration_data):
-        """If status is not provided, it should default to UNPAID."""
-        payload = UserIntegrationTaskPayload(**valid_user_integration_data)
-        assert payload.status == UserStatus.UNPAID
-
-    def test_accepts_explicit_status(self, valid_user_integration_data):
-        """If status is provided, it should be set correctly."""
-        valid_user_integration_data.update({"status": UserStatus.PAID})
-        payload = UserIntegrationTaskPayload(**valid_user_integration_data)
-        assert payload.status == UserStatus.PAID
-
     def test_invalid_user_id_raises(self, valid_tg_session_string):
         """If user_id is not a valid UUID, validation should fail."""
         with pytest.raises(ValidationError):
@@ -61,7 +49,9 @@ class TestUserIntegrationTaskPayload:
     def test_required_fields_enforced(self):
         """If required fields are missing, validation should fail."""
         with pytest.raises(ValidationError):
-            UserIntegrationTaskPayload()
+            UserIntegrationTaskPayload(
+                user_id=uuid7(), integration=Integration.TELEGRAM
+            )
 
 
 class TestIntegrationDataAnalysisTaskPayload:

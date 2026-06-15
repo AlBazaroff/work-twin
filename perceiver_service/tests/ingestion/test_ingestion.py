@@ -25,14 +25,14 @@ def mock_session(user_id):
 
 class TestIngestionService:
     @pytest.mark.asyncio
+    @patch("ingestion.ingestion.get_or_create_user")
     @patch("ingestion.ingestion.create_or_update_integration")
     @patch("ingestion.ingestion.ProviderFactory.get_entity")
-    @patch("ingestion.ingestion.get_user")
     async def test_pass_user_integration_data_creates_integration(
         self,
-        mock_get_user,
         mock_get_provider,
         mock_create_or_update,
+        mock_get_or_create_user,
         mock_session,
         user_integration_payload,
     ):
@@ -45,7 +45,7 @@ class TestIngestionService:
         mock_provider = AsyncMock()
         mock_provider.get_identity = AsyncMock(return_value="12345")
         mock_get_provider.return_value = mock_provider
-        mock_get_user.return_value = user
+        mock_get_or_create_user.return_value = user
 
         async def fake_create_or_update(*, db_session, integration_in):
             await db_session.commit()
@@ -86,10 +86,14 @@ class TestIngestionService:
             )
         )
 
-    @pytest.mark.asyncio
+    @patch("ingestion.ingestion.get_or_create_user")
     @patch("ingestion.ingestion.ProviderFactory.get_entity")
     async def test_propagates_provider_not_found(
-        self, mock_get_provider, mock_session, user_integration_payload
+        self,
+        mock_get_provider,
+        mock_get_or_create_user,
+        mock_session,
+        user_integration_payload,
     ):
         """
         Test pass_user_integration_data propagates
@@ -97,7 +101,8 @@ class TestIngestionService:
         """
         from core.providers.exceptions import ProviderNotFoundError
 
-        session, _user = mock_session
+        session, user = mock_session
+        mock_get_or_create_user.return_value = user
         mock_get_provider.side_effect = ProviderNotFoundError("slack")
 
         service = IngestionService(session)
