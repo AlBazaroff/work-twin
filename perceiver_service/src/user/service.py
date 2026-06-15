@@ -5,8 +5,27 @@ from uuid import UUID
 from sqlalchemy import select, insert, update as q_update, delete as q_delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from .models import User
 from .schemas import UserCreate, UserUpdate
+
+
+async def get_or_create(*, db_session: AsyncSession, user_id: UUID) -> User:
+    """Get user by id or create if it doesn't exist."""
+    stmt = (
+        pg_insert(User)
+        .values(id=user_id)
+        .on_conflict_do_nothing(index_elements=[User.id])
+        .returning(User)
+    )
+    user = await db_session.scalar(stmt)
+
+    if not user:
+        user = await get(db_session=db_session, user_id=user_id)
+    else:
+        await db_session.commit()
+
+    return user
 
 
 async def get(*, db_session: AsyncSession, user_id: UUID) -> User | None:

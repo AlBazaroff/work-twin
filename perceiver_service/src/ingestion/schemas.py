@@ -6,7 +6,6 @@ from pydantic import BaseModel, ConfigDict, Field
 from integrations.enums import Integration
 from integrations.models import UserIntegration
 from integrations.telegram.schemas import TelegramCredentials
-from user.enums import UserStatus
 from user.models import User
 
 CredentialsUnion = Union[TelegramCredentials]
@@ -23,7 +22,6 @@ class UserIntegrationTaskPayload(BaseModel):
 
     user_id: UUID
     integration: Integration
-    status: UserStatus = Field(default=UserStatus.UNPAID)
     credentials: CredentialsUnion = Field(..., discriminator="provider")
 
 

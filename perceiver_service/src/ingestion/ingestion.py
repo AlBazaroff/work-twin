@@ -10,7 +10,7 @@ from integrations.schemas import UserIntegrationCreate
 from integrations.service import (
     create_or_update as create_or_update_integration,
 )
-from user.service import get as get_user
+from user.service import get_or_create as get_or_create_user
 
 logger = logging.getLogger(__name__)
 
@@ -28,15 +28,15 @@ class IngestionService:
         user_id = payload.user_id
         integration = payload.integration
 
-        user = await get_user(db_session=self.session, user_id=user_id)
-        if not user:
-            # TODO: raise UserNotExist
-            raise Exception
+        user = await get_or_create_user(
+            db_session=self.session, user_id=user_id
+        )
 
         provider = ProviderFactory.get_entity(integration)
         integration_user_id = await provider.get_identity(
             user.id, payload.credentials
         )
+        # What if integration_user_id is None? Because credentials are invalid
         # TODO USE UPDATED_AT
 
         integration = UserIntegrationCreate(
