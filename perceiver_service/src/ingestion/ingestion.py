@@ -36,10 +36,8 @@ class IngestionService:
         integration_user_id = await provider.get_identity(
             user.id, payload.credentials
         )
-        # What if integration_user_id is None? Because credentials are invalid
-        # TODO USE UPDATED_AT
 
-        integration = UserIntegrationCreate(
+        integration_create = UserIntegrationCreate(
             user_id=user_id,
             integration=integration,
             integration_user_id=integration_user_id,
@@ -47,7 +45,8 @@ class IngestionService:
         )
         new_integration = await create_or_update_integration(
             db_session=self.session,
-            integration_in=integration,
+            integration_in=integration_create,
+            updated_at=payload.updated_at,
         )
 
         logger.info(

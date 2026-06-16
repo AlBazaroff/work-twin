@@ -1,5 +1,6 @@
 from uuid import UUID
 from typing import Union
+from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -23,6 +24,7 @@ class UserIntegrationTaskPayload(BaseModel):
     user_id: UUID
     integration: Integration
     credentials: CredentialsUnion = Field(..., discriminator="provider")
+    updated_at: datetime
 
 
 class IntegrationDataAnalysisTaskPayload(BaseModel):
@@ -37,4 +39,4 @@ class UserIntegrationResponse(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     user: User
-    integration: UserIntegration
+    integration: UserIntegration | None

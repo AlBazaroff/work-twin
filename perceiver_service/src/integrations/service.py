@@ -1,5 +1,6 @@
 """CRUD operation to work with user integration models."""
 
+from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import select, insert, update as q_update, delete as q_delete
@@ -26,7 +27,7 @@ async def create(
     """Create new user integration based on integration_in data."""
     stmt = (
         insert(UserIntegration)
-        .values(**integration_in.model_dump())
+        .values(**integration_in.model_dump(exclude_unset=True))
         .returning(UserIntegration)
     )
     user_integration = await db_session.scalar(stmt)
@@ -36,21 +37,34 @@ async def create(
 
 
 async def create_or_update(
-    *, db_session: AsyncSession, integration_in: UserIntegrationCreate
+    *,
+    db_session: AsyncSession,
+    integration_in: UserIntegrationCreate,
+    updated_at: datetime,
 ) -> UserIntegration | None:
     """
-    Create or update new UserIntegration based on integration_in data.
+    Create or update new UserIntegration
+    based on integration_in data and updated_at field.
     """
-    data = integration_in.model_dump()
-    stmt = (
-        psql_insert(UserIntegration)
-        .values(**data)
-        .on_conflict_do_update(
-            index_elements=["user_id", "integration"],
-            set_=dict(**data),
-        )
-        .returning(UserIntegration)
+    data = integration_in.model_dump(exclude_unset=True)
+    insert_stmt = psql_insert(UserIntegration).values(
+        **data, updated_at=updated_at
     )
+
+    update_columns = {
+        col.name: insert_stmt.excluded[col.name]
+        for col in UserIntegration.__table__.columns
+        if col.name not in ["user_id", "integration"] and col.name in data
+    }
+    update_columns["updated_at"] = updated_at
+
+    stmt = insert_stmt.on_conflict_do_update(
+        index_elements=["user_id", "integration"],
+        set_=update_columns,
+        where=(UserIntegration.updated_at < updated_at)
+        if updated_at
+        else None,
+    ).returning(UserIntegration)
     user_integration = await db_session.scalar(stmt)
     await db_session.commit()
 

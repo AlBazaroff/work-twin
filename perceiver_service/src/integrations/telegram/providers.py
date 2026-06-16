@@ -160,10 +160,12 @@ class TelegramProvider(SocialProvider):
 
     async def get_identity(
         self, user_id: UUID, credentials: TelegramCredentials
-    ) -> str:
+    ) -> str | None:
         """Get the identity of the Telegram user account."""
         async with self._get_client(user_id, credentials) as client:
             me = await client.get_me()
+            if not me:
+                return None
 
             identity = str(me.id)
             return identity
