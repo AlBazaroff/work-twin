@@ -4,10 +4,11 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from user.models import User
+from core.providers.exceptions import ProviderNotFoundError
 from integrations.enums import Integration
 from integrations.models import UserIntegration
 from ingestion.ingestion import IngestionService
+from user.models import User
 from user.enums import UserStatus
 
 
@@ -24,6 +25,51 @@ def mock_session(user_id):
 
 
 class TestIngestionService:
+    @pytest.mark.asyncio
+    @pytest.mark.asyncio
+    @patch("ingestion.ingestion.get_or_create_user")
+    @patch("ingestion.ingestion.create_or_update_integration")
+    @patch("ingestion.ingestion.ProviderFactory.get_entity")
+    async def test_pass_user_integration_data_with_none_identity(
+        self,
+        mock_get_provider,
+        mock_create_or_update,
+        mock_get_or_create_user,
+        mock_session,
+        user_integration_payload,
+    ):
+        """
+        Test that pass_user_integration_data creates an integration
+        even if get_identity returns None.
+        """
+        session, user = mock_session
+        mock_provider = AsyncMock()
+        mock_provider.get_identity = AsyncMock(return_value=None)
+        mock_get_provider.return_value = mock_provider
+        mock_get_or_create_user.return_value = user
+
+        async def fake_create_or_update(
+            *, db_session, integration_in, updated_at=None
+        ):
+            integration = UserIntegration(
+                user_id=user_integration_payload.user_id,
+                integration=user_integration_payload.integration,
+                integration_user_id=None,
+                credentials=user_integration_payload.credentials.model_dump(
+                    exclude_unset=True
+                ),
+            )
+            return integration
+
+        mock_create_or_update.side_effect = fake_create_or_update
+
+        service = IngestionService(session)
+        response = await service.pass_user_integration_data(
+            user_integration_payload
+        )
+
+        assert response.integration.integration_user_id is None
+
     @pytest.mark.asyncio
     @patch("ingestion.ingestion.get_or_create_user")
     @patch("ingestion.ingestion.create_or_update_integration")
@@ -47,7 +93,9 @@ class TestIngestionService:
         mock_get_provider.return_value = mock_provider
         mock_get_or_create_user.return_value = user
 
-        async def fake_create_or_update(*, db_session, integration_in):
+        async def fake_create_or_update(
+            *, db_session, integration_in, updated_at=None
+        ):
             await db_session.commit()
             integration = UserIntegration(
                 user_id=user_integration_payload.user_id,
@@ -99,8 +147,6 @@ class TestIngestionService:
         Test pass_user_integration_data propagates
         ProviderNotFoundError.
         """
-        from core.providers.exceptions import ProviderNotFoundError
-
         session, user = mock_session
         mock_get_or_create_user.return_value = user
         mock_get_provider.side_effect = ProviderNotFoundError("slack")

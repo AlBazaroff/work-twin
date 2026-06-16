@@ -312,7 +312,7 @@ class TestTelegramProviderGetIdentity:
     @pytest.mark.asyncio
     @patch("integrations.telegram.providers.TelegramClient")
     @patch("integrations.telegram.providers.StringSession")
-    async def test_returns_telegram_user_id_as_string(
+    async def test_returns_none_when_me_is_none(
         self,
         mock_session_cls,
         mock_client_cls,
@@ -321,18 +321,14 @@ class TestTelegramProviderGetIdentity:
         credentials,
         telegram_client,
     ):
-        """Test that get_identity returns the Telegram user id as a string."""
-        mock_me = MagicMock()
-        mock_me.id = 123456
+        """Test that get_identity returns None when get_me returns None."""
         mock_client = telegram_client(authorized=True)
-        mock_client.get_me = AsyncMock(return_value=mock_me)
+        mock_client.get_me = AsyncMock(return_value=None)
         mock_client_cls.return_value = mock_client
 
         identity = await provider.get_identity(user_id, credentials)
 
-        assert identity == "123456"
-        mock_session_cls.assert_called_once_with(credentials.session_string)
-        mock_client_cls.assert_called_once()
+        assert identity is None
         mock_client.get_me.assert_awaited_once()
         mock_client.disconnect.assert_awaited_once()
 

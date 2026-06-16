@@ -49,6 +49,15 @@ def client():
         yield test_client
 
 
+@pytest.fixture()
+async def db_engine():
+    """Fixture for test database engine."""
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+        yield test_engine
+        await conn.run_sync(Base.metadata.drop_all)
+
+
 @pytest.fixture
 async def db_session():
     """Fixture for work with test DB."""

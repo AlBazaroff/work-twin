@@ -1,5 +1,7 @@
 """Test user integration service (CRUD operations)."""
 
+from datetime import datetime
+
 import pytest
 from uuid import uuid4
 
@@ -105,7 +107,9 @@ class TestUserIntegrationCRUD:
 
         integration_in = UserIntegrationCreate(**create_data)
         result = await create_or_update(
-            db_session=db_session, integration_in=integration_in
+            db_session=db_session,
+            integration_in=integration_in,
+            updated_at=datetime.now(),
         )
 
         assert result is not None
@@ -123,7 +127,9 @@ class TestUserIntegrationCRUD:
         integration_in.credentials = new_credentials
 
         result = await create_or_update(
-            db_session=db_session, integration_in=integration_in
+            db_session=db_session,
+            integration_in=integration_in,
+            updated_at=datetime.now(),
         )
 
         assert result is not None

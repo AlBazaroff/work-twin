@@ -1,5 +1,7 @@
 """Specific configs for ingestion."""
 
+from datetime import datetime, timezone
+
 import pytest
 from uuid6 import uuid7
 
@@ -25,4 +27,5 @@ def user_integration_payload(user_id, session_string):
         user_id=user_id,
         integration=Integration.TELEGRAM,
         credentials=TelegramCredentials(session_string=session_string),
+        updated_at=datetime.now(timezone.utc),
     )
