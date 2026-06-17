@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 class BasePersonalityDNA(BaseModel):
     """Schema for Personality DNA."""
 
-    style_markers: dict = Field(...)
+    style_markers: Optional[dict] = Field(...)
 
 
 class PersonalityDNAResponse(BasePersonalityDNA):

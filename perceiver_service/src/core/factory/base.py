@@ -1,17 +1,21 @@
 """Base factory classes."""
 
 from abc import ABC, abstractmethod
-from typing import Type
+from enum import Enum
+from typing import Type, TypeVar, Generic
+
+K = TypeVar("K", bound=Enum)
+V = TypeVar("V")
 
 
 class BaseFactory(ABC):
     pass
 
 
-class RegistryFactory(BaseFactory, ABC):
+class RegistryFactory(BaseFactory, ABC, Generic[K, V]):
     """Factory with register pattern."""
 
-    _registry: dict[str, Type]
+    _registry: dict[K, V]
 
     @classmethod
     @abstractmethod

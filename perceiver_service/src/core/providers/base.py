@@ -1,14 +1,15 @@
 """Base factory and provider classes."""
 
 from abc import ABC, abstractmethod
+from typing import Generic
 from uuid import UUID
 
 from config import Settings
 from integrations.enums import Integration
-from integrations.schemas import BaseCredentials
+from integrations.schemas import TCreds
 
 
-class BaseProvider(ABC):
+class BaseProvider(ABC, Generic[TCreds]):
     """Base provider interface for all data providers."""
 
     provider: Integration
@@ -20,7 +21,7 @@ class BaseProvider(ABC):
         pass
 
     @abstractmethod
-    async def get_identity(self, user_id: UUID, credentials: BaseCredentials):
+    async def get_identity(self, user_id: UUID, credentials: TCreds):
         """Return identity in the provider service.
 
         Args:
@@ -29,14 +30,14 @@ class BaseProvider(ABC):
         pass
 
 
-class SocialProvider(BaseProvider):
+class SocialProvider(BaseProvider[TCreds]):
     """Base provider for social media services."""
 
     @abstractmethod
     async def fetch_chat_history(
         self,
         user_id: UUID,
-        credentials: BaseCredentials,
+        credentials: TCreds,
         limit: int | None = None,
         *args,
         **kwargs,
@@ -50,9 +51,7 @@ class SocialProvider(BaseProvider):
         pass
 
     @abstractmethod
-    async def analyze_profile(
-        self, user_id: UUID, credentials: BaseCredentials
-    ):
+    async def analyze_profile(self, user_id: UUID, credentials: TCreds):
         """Analyze user profile in provider service.
 
         Args:

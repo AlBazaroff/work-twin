@@ -49,32 +49,32 @@ class EmbeddingsFactory(RegistryFactory):
     @classmethod
     def register(
         cls,
-        embedding_cls: Type[Embeddings],
-        emb_provider: EmbeddingProvider,
+        entity_cls: Type[Embeddings],
+        entity_key: EmbeddingProvider,
         *args,
         **kwargs,
     ):
         """Register new embedding in registry.
 
         Args:
-            embedding_cls: class of Embedding
-            emb_provider: embedding registered in provider
+            entity_cls: class of Embedding
+            entity_key: embedding registered in provider
             **kwargs: kwargs for embedding class instance
         """
-        cls._registry[emb_provider] = (embedding_cls, kwargs)
+        cls._registry[entity_key] = (entity_cls, kwargs)
 
     @classmethod
     def get_entity(
-        cls, embeddings: EmbeddingProvider, *args, **kwargs
+        cls, entity: EmbeddingProvider, *args, **kwargs
     ) -> Embeddings:
         """Return embedding from registry.
 
         Args:
-            embeddings: supported embeddings from SuppEmbeddings
+            entity: supported embeddings from SuppEmbeddings
         """
-        if embeddings not in cls._registry:
-            raise EmbeddingNotFoundError(embeddings.value)
+        if entity not in cls._registry:
+            raise EmbeddingNotFoundError(entity.value)
 
-        embed = cls._registry[embeddings]
+        embed = cls._registry[entity]
         result = embed[0](**embed[1])
         return result

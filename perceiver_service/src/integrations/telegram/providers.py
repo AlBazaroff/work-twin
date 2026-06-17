@@ -24,7 +24,7 @@ from .schemas import TelegramCredentials, TelegramMessage
 logger = logging.getLogger(__name__)
 
 
-class TelegramProvider(SocialProvider):
+class TelegramProvider(SocialProvider[TelegramCredentials]):
     """Provider for Telegram service."""
 
     provider: Integration = Integration.TELEGRAM
@@ -162,6 +162,7 @@ class TelegramProvider(SocialProvider):
         self, user_id: UUID, credentials: TelegramCredentials
     ) -> str | None:
         """Get the identity of the Telegram user account."""
+
         async with self._get_client(user_id, credentials) as client:
             me = await client.get_me()
             if not me:

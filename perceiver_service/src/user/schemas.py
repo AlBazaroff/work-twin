@@ -11,22 +11,21 @@ class BaseUser(BaseModel):
     """Base User schema."""
 
     id: UUID
-    status: UserStatus
 
 
-class DefaultFieldsMixin(BaseModel):
+class DefaultUserFieldsMixin(BaseModel):
     """Default fields for User."""
 
     status: UserStatus | None = Field(default=None)
 
 
-class UserCreate(DefaultFieldsMixin, BaseUser):
+class UserCreate(BaseUser, DefaultUserFieldsMixin):
     """Schema for creating User."""
 
     pass
 
 
-class UserUpdate(DefaultFieldsMixin, BaseUser):
+class UserUpdate(BaseUser, DefaultUserFieldsMixin):
     """Schema for updating User."""
 
     pass

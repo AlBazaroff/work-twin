@@ -42,7 +42,7 @@ class DBSettings(BaseModel):
     port: str = Field(default="5432")
     name: str = Field(default="perceiver_work_twin")
     provider: str = Field(default="postgresql+asyncpg")
-    connection_url: str | None = Field(default=None)
+    connection_url: str
 
     engine_pool_ping: bool = Field(default=False)
     engine_pool_recycle: int = Field(default=3600)

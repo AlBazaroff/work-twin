@@ -14,7 +14,7 @@ from .schemas import (
 
 
 async def get(
-    *, db_session: AsyncSession, personality_id: int
+    *, db_session: AsyncSession, personality_id: UUID
 ) -> PersonalityDNA | None:
     """Return personality DNA based on the given id."""
     stmt = select(PersonalityDNA).where(PersonalityDNA.id == personality_id)
@@ -44,7 +44,7 @@ async def create(
     personality = await db_session.scalar(stmt)
     await db_session.commit()
 
-    return personality
+    return personality  # type: ignore
 
 
 async def update(

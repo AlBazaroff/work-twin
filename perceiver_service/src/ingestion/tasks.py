@@ -10,7 +10,6 @@ from ingestion.schemas import (
 from ingestion.ingestion import IngestionService
 from user.enums import UserStatus
 
-
 logger = get_task_logger(__name__)
 
 

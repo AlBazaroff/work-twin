@@ -20,29 +20,27 @@ class ProviderFactory(RegistryFactory):
     @classmethod
     def register(
         cls,
-        provider_cls: Type[BaseProvider],
-        integration: Integration,
+        entity_cls: Type[BaseProvider],
+        entity_key: Integration,
         *args,
         **kwargs,
     ):
         """Register new provider class in registry.
 
         Args:
-            provider_cls: class of provider
-            integration: registered Integration
+            entity_cls: class of provider
+            entity_key: registered Integration
         """
-        cls._registry[integration] = provider_cls
+        cls._registry[entity_key] = entity_cls
 
     @classmethod
-    def get_entity(
-        cls, provider: Integration, *args, **kwargs
-    ) -> BaseProvider:
+    def get_entity(cls, entity: Integration, *args, **kwargs) -> BaseProvider:
         """Return provider by integration from registry.
 
         Args:
-            provider: existing provider in Integration
+            entity: existing provider in Integration
         """
-        if provider not in cls._registry:
-            raise ProviderNotFoundError(provider.value)
-        result = cls._registry[provider].from_settings(settings)
+        if entity not in cls._registry:
+            raise ProviderNotFoundError(entity.value)
+        result = cls._registry[entity].from_settings(settings)
         return result

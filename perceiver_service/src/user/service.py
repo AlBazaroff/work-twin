@@ -25,7 +25,7 @@ async def get_or_create(*, db_session: AsyncSession, user_id: UUID) -> User:
     else:
         await db_session.commit()
 
-    return user
+    return user  # type: ignore
 
 
 async def get(*, db_session: AsyncSession, user_id: UUID) -> User | None:
@@ -36,7 +36,9 @@ async def get(*, db_session: AsyncSession, user_id: UUID) -> User | None:
     return user
 
 
-async def create(*, db_session: AsyncSession, user_in: UserCreate) -> User:
+async def create(
+    *, db_session: AsyncSession, user_in: UserCreate
+) -> User | None:
     """Create new user from user_in."""
     stmt = insert(User).values(**user_in.model_dump()).returning(User)
     user = await db_session.scalar(stmt)

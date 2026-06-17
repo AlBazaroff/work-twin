@@ -1,6 +1,7 @@
 """Schemas for integrations."""
 
 from datetime import datetime
+from typing import TypeVar
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -12,6 +13,9 @@ class BaseCredentials(BaseModel):
     """Base credentials for all providers."""
 
     pass
+
+
+TCreds = TypeVar("TCreds", bound=BaseCredentials)
 
 
 class BaseUserIntegration(BaseModel):
@@ -40,5 +44,5 @@ class UserIntegrationUpdate(BaseUserIntegration, DefaultFieldsMixin):
     """Schema for update UserIntegration."""
 
     id: UUID
-    integration: Integration | None = Field(None)
-    credentials: dict | None = Field(None)
+    integration: Integration | None = Field(None)  # type: ignore
+    credentials: dict | None = Field(None)  # type: ignore
