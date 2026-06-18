@@ -1,6 +1,6 @@
 """Tests for IngestionService user integration flow."""
 
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -8,20 +8,6 @@ from core.providers.exceptions import ProviderNotFoundError
 from integrations.enums import Integration
 from integrations.models import UserIntegration
 from ingestion.ingestion import IngestionService
-from user.models import User
-from user.enums import UserStatus
-
-
-@pytest.fixture
-def mock_session(user_id):
-    """Create a mock AsyncSession with a user already in the db."""
-    session = AsyncMock()
-    user = User(id=user_id, status=UserStatus.UNPAID)
-    result = MagicMock()
-    result.scalar_one.return_value = user
-    session.execute = AsyncMock(return_value=result)
-    session.commit = AsyncMock()
-    return session, user
 
 
 class TestIngestionService:
