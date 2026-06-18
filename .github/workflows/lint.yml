@@ -24,5 +24,8 @@ jobs:
       - name: Install the project
         run: uv sync --locked --all-extras --dev
 
+      - name: Run mypy
+        run: uv run mypy perceiver_service/src
+
       - name: Run ruff check
         run: uv run ruff check --output-format=github
