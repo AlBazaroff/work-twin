@@ -1,5 +1,6 @@
 """CRUD operation to work with user integration models."""
 
+import logging
 from datetime import datetime
 from uuid import UUID
 
@@ -9,6 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import UserIntegration
 from .schemas import UserIntegrationCreate, UserIntegrationUpdate
+
+logger = logging.getLogger("app")
 
 
 async def get(

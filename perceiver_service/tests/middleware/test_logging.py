@@ -3,14 +3,12 @@
 import uuid
 
 import pytest
+from asgi_correlation_id import CorrelationIdMiddleware
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from core.const.errors.base import INTERNAL_ERROR_MESSAGE
-from middleware.logging import (
-    CorrelationIdMiddleware,
-    EnhancedLoggingMiddleware,
-)
+from middleware.logging import EnhancedLoggingMiddleware
 
 ROOT_PATH = "/"
 ERROR_PATH = "/error"

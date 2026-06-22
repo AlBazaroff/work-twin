@@ -1,9 +1,8 @@
 import logging
 import time
-import uuid
-from contextvars import ContextVar
 from typing import Callable
 
+from asgi_correlation_id import correlation_id
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import JSONResponse
@@ -11,8 +10,6 @@ from starlette.responses import JSONResponse
 from core.const.errors.base import INTERNAL_ERROR_MESSAGE
 
 logger = logging.getLogger("perceiver.middleware")
-
-correlation_id: ContextVar[str] = ContextVar("correlation_id", default="")
 
 
 def _calc_process_time(start_time: float) -> float:
@@ -24,26 +21,6 @@ def _calc_process_time(start_time: float) -> float:
         start_time: time when process started
     """
     return (time.perf_counter() - start_time) * 1000
-
-
-class CorrelationIdMiddleware(BaseHTTPMiddleware):
-    """
-    Middleware to add a correlation ID
-    to the request context for tracing and logging purposes.
-    """
-
-    async def dispatch(
-        self, request: Request, call_next: Callable
-    ) -> Response:
-        id_value = request.headers.get("X-Correlation-ID", str(uuid.uuid4()))
-        token = correlation_id.set(id_value)
-
-        try:
-            response = await call_next(request)
-            response.headers["X-Correlation-ID"] = id_value
-            return response
-        finally:
-            correlation_id.reset(token)
 
 
 class EnhancedLoggingMiddleware(BaseHTTPMiddleware):
@@ -77,6 +54,6 @@ class EnhancedLoggingMiddleware(BaseHTTPMiddleware):
                 status_code=500,
                 content={
                     "error": INTERNAL_ERROR_MESSAGE,
-                    "corrlation_id": c_id,
+                    "correlation_id": c_id,
                 },
             )
